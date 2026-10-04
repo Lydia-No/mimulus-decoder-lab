@@ -2,7 +2,7 @@ import pytest
 
 from mimulus_decoder.benchmark import run_benchmark
 from mimulus_decoder.decoders import explicit_mapping_decoder, token_structure_decoder
-from mimulus_decoder.encoding import encode_tokens
+from mimulus_decoder.encoding import EncodedFixture, encode_tokens
 from mimulus_decoder.model import CandidateReading, DecoderContext, MetaOutcome, compare_readings
 from mimulus_decoder.recovery import evaluate_recovery
 
@@ -121,3 +121,24 @@ def test_executable_benchmark_exposes_failure_controls():
     assert scores["incomplete-key"]["unresolved_tokens"] == 2
     assert scores["lossy-choice"]["token_accuracy"] == 0.75
     assert report["shared_wrong_key_agreement"] == "convergence"
+
+
+@pytest.mark.parametrize("original,encoded,codebook", [
+    (("sun",), ("q", "x"), (("sun", "q"),)),  # Previously falsely scored exact.
+    (("sun", "water"), ("q",), (("sun", "q"), ("water", "x"))),
+    ((), (), (("sun", "q"),)),
+    (("sun",), ("x",), (("sun", "q"),)),
+    (("sun",), ("q",), (("water", "q"),)),
+    (("sun",), ("q",), (("sun", "q"), ("sun", "x"))),
+    (["sun"], ("q",), (("sun", "q"),)),
+    (("sun",), ("q",), (["sun", "q"],)),
+])
+def test_malformed_reference_cannot_enter_recovery(original, encoded, codebook):
+    with pytest.raises(ValueError):
+        EncodedFixture("s", "e", original, encoded, codebook)
+
+
+def test_direct_reference_construction_preserves_valid_lossy_case():
+    source = EncodedFixture("s", "e", ("sun", "water"), ("q", "q"),
+                            (("sun", "q"), ("water", "q")))
+    assert evaluate_recovery(source, decode(source, {"q": "sun"})).token_accuracy == 0.5

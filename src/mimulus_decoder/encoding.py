@@ -21,6 +21,27 @@ class EncodedFixture:
     encoded_tokens: tuple[str, ...]
     codebook: tuple[tuple[str, str], ...]
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.source_id, str) or not self.source_id or not isinstance(self.encoder_id, str) or not self.encoder_id:
+            raise ValueError("Source and encoder identifiers are required")
+        if not isinstance(self.original_tokens, tuple) or not isinstance(self.encoded_tokens, tuple):
+            raise ValueError("Reference sequences must be immutable tuples")
+        if not self.original_tokens or len(self.original_tokens) != len(self.encoded_tokens):
+            raise ValueError("Reference requires nonempty, equally sized token sequences")
+        if not all(_token(t) for t in self.original_tokens + self.encoded_tokens):
+            raise ValueError("Reference entries must be single nonempty tokens")
+        if not isinstance(self.codebook, tuple) or not self.codebook or any(
+            not isinstance(pair, tuple) or len(pair) != 2 or not all(_token(t) for t in pair)
+            for pair in self.codebook
+        ):
+            raise ValueError("Reference codebook must contain immutable token pairs")
+        mapping = dict(self.codebook)
+        if len(mapping) != len(self.codebook):
+            raise ValueError("Reference codebook contains duplicate source tokens")
+        if any(original not in mapping or mapping[original] != encoded
+               for original, encoded in zip(self.original_tokens, self.encoded_tokens)):
+            raise ValueError("Encoded reference does not match its recorded codebook")
+
     @property
     def collision_groups(self) -> tuple[tuple[str, tuple[str, ...]], ...]:
         groups: dict[str, list[str]] = {}
