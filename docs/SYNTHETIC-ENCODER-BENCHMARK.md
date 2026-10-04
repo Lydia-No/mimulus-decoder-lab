@@ -15,6 +15,11 @@ Only one-symbol-per-token substitution is modeled. Original whitespace is not
 preserved; insertion, deletion, variable-length encodings, structural recovery,
 and semantic equivalence need separate specifications before being scored.
 
+Reference construction validates nonempty equal sequence lengths, immutable
+token records, unique source keys, and consistency with the recorded codebook.
+Malformed references are rejected before scoring, including manually constructed
+records; extra encoded tokens cannot be silently ignored as an exact recovery.
+
 ## Reference and decoder boundary
 
 `encode_tokens` records the original token tuple, encoder identifier, encoded
