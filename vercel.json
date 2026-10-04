@@ -1,0 +1,1 @@
+{"rewrites":[{"source":"/","destination":"/pilot/index.html"}],"headers":[{"source":"/pilot/(.*)","headers":[{"key":"Cache-Control","value":"no-store"}]}]}
