@@ -15,7 +15,7 @@ test = ["pytest>=8"]
 where = ["src"]
 
 [tool.setuptools.package-data]
-mimulus_decoder = ["decoder.html"]
+mimulus_decoder = ["decoder.html", "hypercube.js"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

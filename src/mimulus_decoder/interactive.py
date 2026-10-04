@@ -10,6 +10,7 @@ from importlib.resources import files
 from uuid import uuid4
 
 from .decoders import explicit_mapping_decoder, token_structure_decoder
+from .context_cube import context_hypercube
 from .encoding import encode_tokens
 from .model import DecoderContext, Observation, compare_readings
 from .recovery import evaluate_recovery
@@ -48,9 +49,10 @@ def analyze(payload: object) -> dict[str, object]:
         observation = fixture.observation()
     else:
         observation = Observation(source_id, source)
-    readings = [explicit_mapping_decoder(observation, DecoderContext(name),
-                                        _mapping(payload.get(key), name))
-                for name, key in (("Decoder A", "decoder_a"), ("Decoder B", "decoder_b"))]
+    mapping_a = _mapping(payload.get("decoder_a"), "Decoder A")
+    mapping_b = _mapping(payload.get("decoder_b"), "Decoder B")
+    readings = [explicit_mapping_decoder(observation, DecoderContext(name), mapping)
+                for name, mapping in (("Decoder A", mapping_a), ("Decoder B", mapping_b))]
     results = []
     for reading in readings:
         recovery = evaluate_recovery(fixture, reading) if fixture else None
@@ -68,6 +70,7 @@ def analyze(payload: object) -> dict[str, object]:
         "results": results,
         "comparison": asdict(compare_readings(readings)),
         "structure": asdict(token_structure_decoder(observation, DecoderContext("Structure"))),
+        "hypercube": context_hypercube(observation, mapping_a, mapping_b, fixture),
         "boundary": "Agreement does not establish correct meaning. Recovery scores require a known reference.",
     }
 
@@ -85,10 +88,13 @@ class WorkspaceHandler(BaseHTTPRequestHandler):
         self.wfile.write(content)
 
     def do_GET(self) -> None:
-        if self.path != "/":
+        resources = {"/": ("decoder.html", "text/html; charset=utf-8"),
+                     "/hypercube.js": ("hypercube.js", "text/javascript; charset=utf-8")}
+        if self.path not in resources:
             self._send(404, b"Not found", "text/plain")
             return
-        self._send(200, files("mimulus_decoder").joinpath("decoder.html").read_bytes(), "text/html; charset=utf-8")
+        resource, content_type = resources[self.path]
+        self._send(200, files("mimulus_decoder").joinpath(resource).read_bytes(), content_type)
 
     def do_POST(self) -> None:
         if self.path != "/analyze":
