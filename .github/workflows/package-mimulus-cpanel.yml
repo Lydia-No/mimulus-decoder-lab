@@ -35,10 +35,12 @@ jobs:
           Document root: /public_html/Mimulus/
 
           1. Create the subdomain in cPanel with document root /public_html/Mimulus/.
-          2. Upload the contents of this bundle into /public_html/Mimulus/ (not a nested folder).
-          3. In api/, duplicate config.example.php as config.php.
-          4. Edit ONLY the server-side api/config.php and add the OpenAI API key.
-          5. Optional but recommended for a public URL: set EXPLORER_TOKEN in config.php.
+          2. Enable cPanel Directory Privacy for /public_html/Mimulus/ before exposing the API-backed site.
+          3. Upload the contents of this bundle into /public_html/Mimulus/ (not a nested folder).
+          4. In api/, duplicate config.example.php as config.php.
+          5. Edit ONLY the server-side api/config.php and replace BOTH placeholders:
+             - REPLACE_WITH_SERVER_SIDE_KEY with the OpenAI API key
+             - REPLACE_WITH_SHARED_TOKEN with a private token shared only with intended users
           6. Never commit the filled config.php to GitHub.
           7. Test https://mimulus.arctopia.no with a small text-only run first, then an image.
 
