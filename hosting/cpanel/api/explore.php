@@ -1,149 +1,21 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
-
-function respond($status, $data) {
-    http_response_code($status);
-    echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    respond(405, array('error' => 'method_not_allowed'));
-}
-
-$configPath = __DIR__ . '/config.php';
-if (!is_file($configPath)) {
-    respond(503, array('error' => 'server_not_configured', 'detail' => 'Missing server config.'));
-}
-$config = include $configPath;
-if (!is_array($config)) {
-    respond(503, array('error' => 'server_not_configured', 'detail' => 'Invalid server config.'));
-}
-
-$expectedToken = isset($config['EXPLORER_TOKEN']) ? (string)$config['EXPLORER_TOKEN'] : '';
-if ($expectedToken !== '') {
-    $supplied = isset($_SERVER['HTTP_X_MIMULUS_EXPLORER_TOKEN']) ? (string)$_SERVER['HTTP_X_MIMULUS_EXPLORER_TOKEN'] : '';
-    if (!hash_equals($expectedToken, $supplied)) {
-        respond(401, array('error' => 'unauthorized'));
-    }
-}
-
-$apiKey = isset($config['OPENAI_API_KEY']) ? trim((string)$config['OPENAI_API_KEY']) : '';
-if ($apiKey === '') {
-    respond(503, array('error' => 'server_not_configured', 'detail' => 'OPENAI_API_KEY is missing.'));
-}
-
-$raw = file_get_contents('php://input');
-$body = json_decode($raw, true);
-if (!is_array($body)) {
-    respond(400, array('error' => 'invalid_json'));
-}
-
-$allowedModes = array('observe', 'structural', 'adversarial', 'explore');
-$mode = isset($body['mode']) && in_array($body['mode'], $allowedModes, true) ? $body['mode'] : 'explore';
-$profile = isset($body['profile']) && $body['profile'] === 'deep' ? 'deep' : 'fast';
-$fastModel = !empty($config['FAST_MODEL']) ? (string)$config['FAST_MODEL'] : 'gpt-6-luna';
-$deepModel = !empty($config['DEEP_MODEL']) ? (string)$config['DEEP_MODEL'] : 'gpt-6.1-sol';
-$model = $profile === 'deep' ? $deepModel : $fastModel;
-
-$note = isset($body['note']) && is_string($body['note']) ? trim(substr($body['note'], 0, 12000)) : '';
-$transcription = isset($body['transcription']) && is_string($body['transcription']) ? trim(substr($body['transcription'], 0, 30000)) : '';
-$image = isset($body['image_data_url']) && is_string($body['image_data_url']) ? $body['image_data_url'] : '';
-
-if ($image === '' && $transcription === '' && $note === '') {
-    respond(400, array('error' => 'missing_input'));
-}
-if ($image !== '' && !preg_match('#^data:image/(png|jpe?g|webp);base64,#i', $image)) {
-    respond(400, array('error' => 'invalid_image', 'detail' => 'Use PNG, JPEG, or WEBP.'));
-}
-if (strlen($image) > 8000000) {
-    respond(413, array('error' => 'image_too_large'));
-}
-
-$shared = "You are Mimulus Explorer, an experimental meta-observer for opaque symbolic material.\n\nYour job is NOT to announce a decipherment. Keep these layers separate:\n1. DIRECT OBSERVATION: what is visibly or explicitly present in the supplied source/representation.\n2. REPRESENTATION ASSUMPTIONS: crop, segmentation, transcription, token grouping, language assumption, or any other preprocessing supplied or inferred.\n3. DERIVED STRUCTURE: patterns that follow from those assumptions.\n4. SEMANTIC HYPOTHESES: possible meanings, always labelled as hypotheses.\n5. TESTS: concrete interventions that could weaken, falsify, or distinguish the hypotheses.\n\nNever treat fluent language, historical fit, repeated motifs, or a plausible intermediate language as proof. A translation of a previous decoder output is lineage-dependent, not independent corroboration. If the source is insufficient, say so. Preserve uncertainty.";
-$modes = array(
-    'observe' => 'Focus on neutral source observations and ambiguity. Avoid semantic interpretation unless needed to explain what NOT to infer.',
-    'structural' => 'Look for recurrence, layout, adjacency, segmentation alternatives, symmetry, ordering, and possible operator/state structure. Offer competing structural accounts.',
-    'adversarial' => 'Act as a skeptical competing decoder. Try to reproduce apparent regularities under alternative assumptions, identify shared-prior effects, and propose matched null or ablation controls.',
-    'explore' => 'Explore bold possibilities, including language or symbolic hypotheses, but explicitly separate speculation from source-constrained evidence and propose tests for every non-trivial interpretation.'
-);
-$instructions = $shared . "\n\nMODE: " . $mode . "\n" . $modes[$mode];
-
-$textParts = array();
-if ($note !== '') $textParts[] = "USER NOTE / QUESTION:\n" . $note;
-if ($transcription !== '') $textParts[] = "SUPPLIED TRANSCRIPTION OR INTERMEDIATE REPRESENTATION (not ground truth):\n" . $transcription;
-$textParts[] = "Return a compact research record with these headings:\n- Direct observations\n- Representation assumptions\n- Candidate structures\n- Semantic hypotheses (if any)\n- Competing explanations\n- Best falsification / ablation tests\n- Evidence status";
-
-$content = array(array('type' => 'input_text', 'text' => implode("\n\n", $textParts)));
-if ($image !== '') {
-    $content[] = array('type' => 'input_image', 'image_url' => $image, 'detail' => 'high');
-}
-
-$requestBody = array(
-    'model' => $model,
-    'instructions' => $instructions,
-    'input' => array(array('role' => 'user', 'content' => $content)),
-    'max_output_tokens' => $profile === 'deep' ? 3500 : 1800,
-    'store' => false
-);
-
-$requestId = bin2hex(random_bytes(16));
-$ch = curl_init('https://api.openai.com/v1/responses');
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
-curl_setopt($ch, CURLOPT_TIMEOUT, 55);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Authorization: Bearer ' . $apiKey,
-    'Content-Type: application/json',
-    'Accept: application/json',
-    'Idempotency-Key: ' . $requestId
-));
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestBody, JSON_UNESCAPED_SLASHES));
-
-$upstreamRaw = curl_exec($ch);
-$curlError = curl_error($ch);
-$status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($upstreamRaw === false) {
-    respond(502, array('error' => 'model_unreachable', 'request_id' => $requestId, 'detail' => $curlError));
-}
-$payload = json_decode($upstreamRaw, true);
-if (!is_array($payload)) $payload = array('raw' => $upstreamRaw);
-if ($status < 200 || $status >= 300) {
-    respond($status > 0 ? $status : 502, array('error' => 'model_error', 'request_id' => $requestId, 'upstream' => $payload));
-}
-
-$outputParts = array();
-if (isset($payload['output']) && is_array($payload['output'])) {
-    foreach ($payload['output'] as $item) {
-        if (!isset($item['type']) || $item['type'] !== 'message' || empty($item['content']) || !is_array($item['content'])) continue;
-        foreach ($item['content'] as $part) {
-            if (isset($part['type'], $part['text']) && $part['type'] === 'output_text' && is_string($part['text'])) {
-                $outputParts[] = $part['text'];
-            }
-        }
-    }
-}
-
-respond(200, array(
-    'object' => 'mimulus_explorer_run',
-    'run_id' => $requestId,
-    'model' => isset($payload['model']) ? $payload['model'] : $model,
-    'profile' => $profile,
-    'mode' => $mode,
-    'source' => array(
-        'image_supplied' => $image !== '',
-        'transcription_supplied' => $transcription !== '',
-        'note_supplied' => $note !== ''
-    ),
-    'output' => trim(implode("\n", $outputParts)),
-    'usage' => isset($payload['usage']) ? $payload['usage'] : null,
-    'mimulus' => array(
-        'classification' => 'EXPLORATORY_DECODER_OUTPUT',
-        'independent_evidence' => false,
-        'warning' => 'This output is a decoder observation, not a decipherment result. Any downstream translation remains lineage-dependent unless independently run from the frozen source.'
-    )
-));
+function respond($status,$data){http_response_code($status);echo json_encode($data,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);exit;}
+if($_SERVER['REQUEST_METHOD']!=='POST')respond(405,array('error'=>'method_not_allowed'));
+$configPath=__DIR__.'/config.php';if(!is_file($configPath))respond(503,array('error'=>'server_not_configured','detail'=>'Missing server config.'));
+$config=include $configPath;if(!is_array($config))respond(503,array('error'=>'server_not_configured','detail'=>'Invalid server config.'));
+$expectedToken=isset($config['EXPLORER_TOKEN'])?(string)$config['EXPLORER_TOKEN']:'';if($expectedToken!==''){$supplied=isset($_SERVER['HTTP_X_MIMULUS_EXPLORER_TOKEN'])?(string)$_SERVER['HTTP_X_MIMULUS_EXPLORER_TOKEN']:'';if(!hash_equals($expectedToken,$supplied))respond(401,array('error'=>'unauthorized'));}
+$apiKey=isset($config['OPENAI_API_KEY'])?trim((string)$config['OPENAI_API_KEY']):'';if($apiKey==='')respond(503,array('error'=>'server_not_configured','detail'=>'OPENAI_API_KEY is missing.'));
+$raw=file_get_contents('php://input');$body=json_decode($raw,true);if(!is_array($body))respond(400,array('error'=>'invalid_json'));
+$allowedModes=array('observe','decode','translate','branch','test','compare','structural','adversarial','explore');$mode=isset($body['mode'])&&in_array($body['mode'],$allowedModes,true)?$body['mode']:'explore';$action=isset($body['action'])&&is_string($body['action'])?trim(substr($body['action'],0,30)):$mode;$profile=isset($body['profile'])&&$body['profile']==='deep'?'deep':'fast';$fastModel=!empty($config['FAST_MODEL'])?(string)$config['FAST_MODEL']:'gpt-6-luna';$deepModel=!empty($config['DEEP_MODEL'])?(string)$config['DEEP_MODEL']:'gpt-6.1-sol';$model=$profile==='deep'?$deepModel:$fastModel;
+$note=isset($body['note'])&&is_string($body['note'])?trim(substr($body['note'],0,28000)):'';$transcription=isset($body['transcription'])&&is_string($body['transcription'])?trim(substr($body['transcription'],0,30000)):'';$image=isset($body['image_data_url'])&&is_string($body['image_data_url'])?$body['image_data_url']:'';$targetLanguage=isset($body['target_language'])&&is_string($body['target_language'])?trim(substr($body['target_language'],0,80)):'English';$parentRunId=isset($body['parent_run_id'])&&is_string($body['parent_run_id'])?trim(substr($body['parent_run_id'],0,120)):'';$parentLabel=isset($body['parent_label'])&&is_string($body['parent_label'])?trim(substr($body['parent_label'],0,160)):'';
+if($image===''&&$transcription===''&&$note==='')respond(400,array('error'=>'missing_input'));if($image!==''&&!preg_match('#^data:image/(png|jpe?g|webp);base64,#i',$image))respond(400,array('error'=>'invalid_image','detail'=>'Use PNG, JPEG, or WEBP.'));if(strlen($image)>8000000)respond(413,array('error'=>'image_too_large'));
+$shared="You are Mimulus Greenhouse, an experimental decoder, translator, and meta-observer. Your job is to make exploration useful without collapsing source, decoding, translation, and interpretation into one answer.\n\nAlways keep these layers distinct when relevant:\n1. SOURCE OBSERVATION: directly visible or explicitly supplied material.\n2. REPRESENTATION: crop, segmentation, transcription, transliteration, OCR, token grouping, or other preprocessing.\n3. DECODER: mappings, grammar, symbolic operators, language assumptions, or other interpretive procedures.\n4. DERIVED STRUCTURE: patterns produced after applying those assumptions.\n5. TRANSLATION: language rendering of a supplied or derived representation.\n6. INTERPRETATION: semantic reading or hypothesis.\n7. TEST: a concrete change that could distinguish alternatives.\n\nImportant boundaries:\n- Fluent output is not proof of a correct decode.\n- A translation of a decoder output inherits that decoder's assumptions and is not independent corroboration.\n- Multiple runs are not automatically independent if they share the same mapping, prompt, representation, or prior.\n- If a script or language cannot responsibly be read, do not invent a translation. Say what would be required to translate it and, if useful, offer explicitly labelled candidate decoding paths.\n- Preserve uncertainty and provenance. A valid result may be that no stable reading survives.";
+$modes=array('observe'=>"LOOK. Focus first on what is directly present: recurrence, shape, layout, ordering, segmentation ambiguity, and visible relations. Keep semantic claims minimal. End with 2-4 useful next moves.",'decode'=>"DECODE. Attempt one or more explicit candidate decodings. State the decoder assumptions before giving the candidate reading. Prefer concrete mappings or procedures over vague resemblance. Include at least one materially different competing decoder and say what observation would discriminate between them. Do not claim decipherment.",'translate'=>"TRANSLATE into ".$targetLanguage.". First identify what layer is actually being translated: original readable text, transcription, transliteration, or descendant decoder output. If the input is genuinely readable in a known language, provide a careful translation and note uncertainty. If it is an opaque or hypothesized representation, do not silently promote it to a known language. Preserve uncertain tokens, gaps, and lineage. When useful, give both a literal rendering and a smoother rendering, clearly separated.",'branch'=>"BRANCH. Produce a meaningfully different reading of the same source or supplied descendant material by changing one declared assumption: decoder, segmentation, framing, language family, symbolic operator, or context. State exactly what changed and what remained fixed. Aim for a plausible competitor, not a straw man.",'test'=>"TEST. Treat the user's hypothesis as provisional. Design the smallest useful falsification, ablation, counterexample, or one-factor intervention. Predict what should change if the hypothesis is doing real explanatory work and what result would weaken it. If possible, apply the test to the supplied material now.",'compare'=>"COMPARE. The user has supplied multiple branches from an exploration trail. Compare them without treating branch count as evidential independence. Identify: shared source-constrained residue, decoder-dependent structure, translation-only convergence, direct contradictions, hidden shared assumptions, and the single best next discriminating test.",'structural'=>"STRUCTURAL. Look for recurrence, layout, adjacency, segmentation alternatives, symmetry, ordering, and possible operator/state structure. Offer competing structural accounts.",'adversarial'=>"ADVERSARIAL. Act as a skeptical competing decoder. Try to reproduce apparent regularities under alternative assumptions, identify shared-prior effects, and propose matched null or ablation controls.",'explore'=>"EXPLORE. Explore bold possibilities, including language or symbolic hypotheses, while explicitly separating speculation from source-constrained evidence and proposing tests for non-trivial interpretations.");
+$instructions=$shared."\n\nMODE: ".strtoupper($mode)."\n".$modes[$mode];if($parentRunId!=='')$instructions.="\n\nLINEAGE: This request descends from parent run ".$parentRunId.($parentLabel!==''?" (".$parentLabel.")":"").". Do not describe the descendant as an independent reading from the original source unless the user has actually returned to the frozen source with independently varied conditions.";
+$textParts=array();if($note!=='')$textParts[]="USER NOTE / QUESTION:\n".$note;if($transcription!=='')$textParts[]="SUPPLIED TEXT / TRANSCRIPTION / DESCENDANT REPRESENTATION:\n".$transcription;$recordPrompts=array('observe'=>"Return a compact record with: Direct observations; Ambiguities; Minimal candidate structures; Best next moves; Evidence status.",'decode'=>"Return a compact record with: Decoder assumptions; Candidate decoding; Competing decoder; Source support vs decoder contribution; Discriminating test; Evidence status.",'translate'=>"Return a compact record with: What layer is being translated; Language/status assessment; Literal translation (if justified); Natural translation (if justified); Uncertain or inherited elements; Lineage note; Evidence status.",'branch'=>"Return a compact record with: Changed assumption; Held-fixed conditions; Competing reading; What changed; What survived; Next discriminating test.",'test'=>"Return a compact record with: Hypothesis; Intervention/ablation; Expected result if supported; Expected result if weakened; Applied result if possible; Interpretation boundary.",'compare'=>"Return a compact record with: Shared residue; Decoder-dependent differences; Translation-only convergence; Contradictions; Shared assumptions; Best next test; Evidence status.");$textParts[]=isset($recordPrompts[$mode])?$recordPrompts[$mode]:"Return a compact research record separating observations, assumptions, derived structure, semantic hypotheses, competing explanations, tests, and evidence status.";
+$content=array(array('type'=>'input_text','text'=>implode("\n\n",$textParts)));if($image!=='')$content[]=array('type'=>'input_image','image_url'=>$image,'detail'=>'high');$requestBody=array('model'=>$model,'instructions'=>$instructions,'input'=>array(array('role'=>'user','content'=>$content)),'max_output_tokens'=>$profile==='deep'?4200:2200,'store'=>false);
+$requestId=bin2hex(random_bytes(16));$ch=curl_init('https://api.openai.com/v1/responses');curl_setopt($ch,CURLOPT_POST,true);curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,15);curl_setopt($ch,CURLOPT_TIMEOUT,55);curl_setopt($ch,CURLOPT_HTTPHEADER,array('Authorization: Bearer '.$apiKey,'Content-Type: application/json','Accept: application/json','Idempotency-Key: '.$requestId));curl_setopt($ch,CURLOPT_POSTFIELDS,json_encode($requestBody,JSON_UNESCAPED_SLASHES));$upstreamRaw=curl_exec($ch);$curlError=curl_error($ch);$status=(int)curl_getinfo($ch,CURLINFO_HTTP_CODE);curl_close($ch);if($upstreamRaw===false)respond(502,array('error'=>'model_unreachable','request_id'=>$requestId,'detail'=>$curlError));$payload=json_decode($upstreamRaw,true);if(!is_array($payload))$payload=array('raw'=>$upstreamRaw);if($status<200||$status>=300)respond($status>0?$status:502,array('error'=>'model_error','request_id'=>$requestId,'upstream'=>$payload));
+$outputParts=array();if(isset($payload['output'])&&is_array($payload['output']))foreach($payload['output'] as $item){if(!isset($item['type'])||$item['type']!=='message'||empty($item['content'])||!is_array($item['content']))continue;foreach($item['content'] as $part)if(isset($part['type'],$part['text'])&&$part['type']==='output_text'&&is_string($part['text']))$outputParts[]=$part['text'];}
+$classifications=array('observe'=>'SOURCE_OBSERVATION','decode'=>'CANDIDATE_DECODING','translate'=>'TRANSLATION_OUTPUT','branch'=>'COMPETING_BRANCH','test'=>'HYPOTHESIS_TEST','compare'=>'CROSS_BRANCH_COMPARISON');$classification=isset($classifications[$mode])?$classifications[$mode]:'EXPLORATORY_DECODER_OUTPUT';respond(200,array('object'=>'mimulus_greenhouse_run','run_id'=>$requestId,'model'=>isset($payload['model'])?$payload['model']:$model,'profile'=>$profile,'mode'=>$mode,'action'=>$action,'target_language'=>$targetLanguage,'parent_run_id'=>$parentRunId!==''?$parentRunId:null,'source'=>array('image_supplied'=>$image!=='','text_supplied'=>$transcription!=='','note_supplied'=>$note!==''),'output'=>trim(implode("\n",$outputParts)),'usage'=>isset($payload['usage'])?$payload['usage']:null,'mimulus'=>array('classification'=>$classification,'independent_evidence'=>false,'lineage'=>array('parent_run_id'=>$parentRunId!==''?$parentRunId:null,'parent_label'=>$parentLabel!==''?$parentLabel:null,'descendant'=>$parentRunId!==''),'warning'=>'Decoding and translation are exploratory outputs unless independently supported. Descendant translations inherit upstream decoder assumptions.')));
