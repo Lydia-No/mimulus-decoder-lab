@@ -32,6 +32,16 @@ The lab develops a reproducible pipeline around:
 
 Multiple decoder contexts should be evaluated independently where possible. Comparison occurs after candidate readings are produced rather than forcing all decoders into a single shared semantic scheme.
 
+## Current runnable pilot
+
+`pilot/` contains **Pilot 001 — decoder persistence**, a deterministic known-answer gate for the measurement scaffold.
+
+Three materially different decoder families inspect the same frozen synthetic source. The meta-observer then distinguishes source-supported invariants, decoder-dependent supported features, unsupported candidate structure and missed source features. A separate controlled history arm uses different, reset, swapped and identical retained states.
+
+The pilot is deliberately synthetic. Passing it does not validate transport to Voynich; it only establishes that the implementation can preserve the distinctions the historical experiment requires.
+
+See `docs/PILOT-001-DECODER-PERSISTENCE.md` and `pilot/README.md`.
+
 ## Initial falsification questions
 
 - Does an apparent pattern survive changes in decoder assumptions?
@@ -47,9 +57,11 @@ Voynich material is used here as a difficult test case because the manuscript su
 
 Any output in this repository should therefore be read as an **experimental candidate interpretation**, unless independently validated by evidence outside the decoder.
 
+Historical source handling is governed by `docs/SOURCE-PROVENANCE.md`. The first historical fixture, `f113r`, remains separately gated from the synthetic measurement validation.
+
 ## Status
 
-Early experimental scaffold. Interfaces, fixtures, and tests will be added incrementally. No decipherment claim is made.
+Active experimental scaffold. Pilot 001 is a deterministic known-answer measurement test; historical decoder runs remain gated. No decipherment claim is made.
 
 ## Authorship
 
