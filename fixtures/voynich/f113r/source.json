@@ -1,31 +1,37 @@
 {
   "fixture_id": "voynich-f113r",
-  "status": "scaffold",
+  "status": "provenance_registered",
   "source_id": "beinecke-ms408",
   "folio": "f113r",
   "source_region": {
     "kind": "folio",
-    "page_mapping_status": "pending_verified_pdf_mapping",
+    "authority_pointer": "https://collections.library.yale.edu/catalog/2002046?child_oid=1006270",
+    "folio_identity_status": "registered_to_authority_catalog",
+    "access_copy_page_mapping_status": "pending_verified_pdf_mapping",
     "crop": null
   },
   "source_layers": {
     "image": {
-      "status": "pending_extraction_from_verified_access_copy",
+      "status": "authority_pointer_registered_exact_image_bytes_pending_freeze",
       "classification": "SOURCE_IMAGE"
     },
     "folio_metadata": {
+      "status": "registered",
       "classification": "SOURCE_METADATA"
     },
     "transcriptions": [],
     "layout_observations": [],
+    "reference_observations": "reference-observations.json",
     "preprocessing": []
   },
   "experimental_boundary": {
     "allow_semantic_claims_before_source_freeze": false,
     "allow_silent_glyph_normalization": false,
     "allow_transcription_as_source_substitute": false,
+    "allow_secondary_reference_observation_as_direct_source_evidence": false,
     "require_decoder_provenance": true,
-    "require_frozen_runs_before_meta_comparison": true
+    "require_frozen_runs_before_meta_comparison": true,
+    "require_synthetic_gate_before_historical_run": true
   },
   "planned_conditions": [
     "unaltered_source",
@@ -36,6 +42,7 @@
   ],
   "notes": [
     "No translation or decipherment claim is encoded in this fixture.",
-    "Exact PDF page mapping, extraction coordinates and byte hashes must be verified before the folio is enabled for evidence-bearing runs."
+    "The Yale child-object pointer anchors folio identity independently of access-copy PDF pagination.",
+    "Exact source-image bytes and any image-dependent extraction coordinates must still be frozen before evidence-bearing historical runs."
   ]
 }
