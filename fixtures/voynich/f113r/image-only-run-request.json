@@ -1,0 +1,9 @@
+{
+  "run_id": "f113r-image-only-001",
+  "fixture_id": "voynich-f113r",
+  "source_sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c",
+  "protocol": "docs/F113R-IMAGE-ONLY-PILOT.md",
+  "decoder_version": "image-only-001.0",
+  "status": "requested",
+  "boundary": "Result-bearing run requested only after the decoder rules and thresholds were merged to main."
+}

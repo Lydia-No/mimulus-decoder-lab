@@ -1,0 +1,44 @@
+{
+  "claims": [
+    {
+      "claimKey": "horizontal-repetition",
+      "evidence": [{"layer": "SOURCE_IMAGE", "locator": "B5:central-gradient-autocorrelation"}],
+      "proposition": "present",
+      "target": "full-folio-layout"
+    },
+    {
+      "claimKey": "left-margin-discrete-repetition",
+      "evidence": [{"layer": "SOURCE_IMAGE", "locator": "B5:margin-gradient-autocorrelation"}],
+      "proposition": "present",
+      "target": "left-margin-layout"
+    }
+  ],
+  "decoder": {
+    "assumptions": [
+      "grayscale source image only",
+      "no binarization",
+      "repeated organization appears as autocorrelation in vertical-gradient energy",
+      "central and left-margin regions are evaluated separately"
+    ],
+    "blindCode": "B5",
+    "version": "image-only-001.0"
+  },
+  "frozen": true,
+  "measurements": {
+    "centralBestAutocorrelation": 0.4423010724084395,
+    "centralBestLagPx": 21,
+    "marginBestAutocorrelation": 0.4504958380536848,
+    "marginBestLagPx": 20
+  },
+  "preprocessing": {
+    "centralCrop": [0.18, 0.05, 0.94, 0.95],
+    "marginCrop": [0.03, 0.05, 0.18, 0.95],
+    "representation": "BILINEAR grayscale resize plus vertical-gradient energy",
+    "width": 900
+  },
+  "runId": "f113r-image-B5",
+  "source": {
+    "fixtureId": "voynich-f113r",
+    "sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c"
+  }
+}

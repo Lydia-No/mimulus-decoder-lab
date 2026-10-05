@@ -1,0 +1,47 @@
+{
+  "claims": [
+    {
+      "claimKey": "horizontal-repetition",
+      "evidence": [{"layer": "SOURCE_IMAGE", "locator": "A2:central-row-projection"}],
+      "proposition": "not_detected",
+      "target": "full-folio-layout"
+    },
+    {
+      "claimKey": "left-margin-discrete-repetition",
+      "evidence": [{"layer": "SOURCE_IMAGE", "locator": "A2:margin-row-projection"}],
+      "proposition": "not_detected",
+      "target": "left-margin-layout"
+    }
+  ],
+  "decoder": {
+    "assumptions": [
+      "grayscale source image only",
+      "global Otsu threshold within each declared crop",
+      "horizontal organization appears as repeated row-projection bands",
+      "left-margin repetition appears as separated row-projection bands in the declared margin crop"
+    ],
+    "blindCode": "A2",
+    "version": "image-only-001.0"
+  },
+  "frozen": true,
+  "measurements": {
+    "centralBandCount": 1,
+    "centralGapCv": null,
+    "centralMedianGapPx": null,
+    "centralOtsu": 159,
+    "marginBandCount": 1,
+    "marginMedianGapPx": null,
+    "marginOtsu": 158
+  },
+  "preprocessing": {
+    "centralCrop": [0.18, 0.05, 0.94, 0.95],
+    "marginCrop": [0.03, 0.05, 0.18, 0.95],
+    "representation": "LANCZOS grayscale resize",
+    "width": 1200
+  },
+  "runId": "f113r-image-A2",
+  "source": {
+    "fixtureId": "voynich-f113r",
+    "sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c"
+  }
+}

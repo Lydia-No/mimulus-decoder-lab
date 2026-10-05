@@ -1,0 +1,21 @@
+{
+  "run_id": "f113r-image-only-001",
+  "protocol": "docs/F113R-IMAGE-ONLY-PILOT.md",
+  "decoder_version": "image-only-001.0",
+  "source_sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c",
+  "github": {
+    "pull_request": 27,
+    "head_sha": "a8c9c5ef1b5d400d7e23bca1e1ed2db2b09ef978",
+    "workflow_run_id": 37378725581,
+    "workflow_merge_ref_sha": "849124c4c49a23415f20cf74f47aa81e9720956d",
+    "artifact_id": 11372518712,
+    "artifact_zip_sha256": "b0c60e300e9a6e98e9b90174cf8129a55992a2f684d9974c8625500677ac21bd"
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "pillow": "11.3.0",
+    "runner": "ubuntu-24.04"
+  },
+  "status": "completed_successfully",
+  "result_boundary": "The committed JSON records reproduce the result-bearing CI output. No decoder thresholds or decision rules were altered after inspecting run 001."
+}
