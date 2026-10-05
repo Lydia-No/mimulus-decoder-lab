@@ -22,7 +22,7 @@ Every historical fixture should retain, separately where applicable:
 - authority or holding institution;
 - access pointer(s);
 - folio/region identifier;
-- local byte hash when an exact access copy is frozen;
+- local byte hash when exact source bytes are frozen;
 - image extraction or crop procedure;
 - transcription convention and version;
 - uncertain or disputed glyphs;
@@ -49,8 +49,14 @@ Do not refer to EVA, another transliteration system, or any normalized token str
 
 Likewise, cross-decoder agreement is not promoted to historical truth. It remains a meta-observation until independently supported.
 
+## Authority image versus access copy
+
+A folio-level authority image and a whole-manuscript access PDF are separate provenance objects. An unhashed transport copy does not invalidate an independently frozen authority folio, and a hash for one must never be silently attributed to the other.
+
+For f113r, the Yale/Beinecke authority JPEG for image id `1006270` is frozen in `fixtures/voynich/f113r/authority-freeze.json` and independently re-fetched with the same SHA-256. The Archive.org manuscript PDF remains a separate convenience access copy whose exact bytes are not currently frozen.
+
 ## Repository storage boundary
 
 The repository should normally store manifests, hashes, coordinates, derived fixtures and experiment records rather than duplicating an entire external manuscript PDF. A complete source artifact may be stored only when licensing, size and reproducibility requirements justify it.
 
-The current Voynich access copy is referenced externally; its exact byte hash remains pending until the referenced PDF can be acquired and frozen reproducibly.
+The Archive.org Voynich PDF remains referenced externally as an access copy. Its missing hash does not substitute for or weaken the separately frozen Yale f113r authority image; it simply means claims tied specifically to that PDF's exact bytes or pagination should not be made without an additional PDF freeze.
