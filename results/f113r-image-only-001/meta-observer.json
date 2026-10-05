@@ -1,0 +1,44 @@
+{
+  "version": "historical-meta-observer-0.1",
+  "fixture": {
+    "id": "voynich-f113r",
+    "sourceId": "beinecke-ms408",
+    "folio": "f113r",
+    "authorityPointer": "https://collections.library.yale.edu/catalog/2002046?child_oid=1006270"
+  },
+  "comparedDecoders": ["A2", "B5", "C8"],
+  "observations": [
+    {
+      "claimKey": "horizontal-repetition",
+      "target": "full-folio-layout",
+      "classification": "INCOMPATIBLE_READINGS",
+      "supportCount": 3,
+      "totalDecoders": 3,
+      "propositions": [
+        {"proposition": "not_detected", "supportingDecoders": ["A2"]},
+        {"proposition": "present", "supportingDecoders": ["B5", "C8"]}
+      ]
+    },
+    {
+      "claimKey": "left-margin-discrete-repetition",
+      "target": "left-margin-layout",
+      "classification": "INCOMPATIBLE_READINGS",
+      "supportCount": 3,
+      "totalDecoders": 3,
+      "propositions": [
+        {"proposition": "not_detected", "supportingDecoders": ["A2", "C8"]},
+        {"proposition": "present", "supportingDecoders": ["B5"]}
+      ]
+    }
+  ],
+  "forbiddenInference": [
+    "SOURCE_SUPPORTED_INVARIANT",
+    "DECODER_DEPENDENT_SUPPORTED",
+    "CORRECT_TRANSLATION",
+    "HISTORICAL_TRUTH"
+  ],
+  "scope": "Agreement is a historical meta-observation only. Without an independent answer key, these classifications describe persistence or conflict across frozen decoder outputs, not correctness.",
+  "runSet": "f113r-image-only-001",
+  "sourceSha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c",
+  "boundary": "Image-only historical comparison. Residue is persistence across these three declared visual decoders, not proof of language, translation, source truth, or decipherment."
+}
