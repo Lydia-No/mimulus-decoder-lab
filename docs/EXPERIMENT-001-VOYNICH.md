@@ -8,6 +8,14 @@ Test whether apparently meaningful structure in a selected Voynich passage is co
 
 This experiment does not begin with a decipherment hypothesis.
 
+## Source precedence
+
+This experiment follows `docs/SOURCE-PROVENANCE.md`.
+
+For evidence about what is visibly present, the manuscript image outranks any transcription, normalization, segmentation or decoder representation. A transcription is a declared representation of the source, not the source itself.
+
+A fixture is not enabled for evidence-bearing runs until its source pointer, folio/region mapping, extraction procedure and relevant provenance fields are frozen. Do not invent or backfill hashes that were not computed from acquired bytes.
+
 ## Inputs
 
 For each selected passage preserve separately:
@@ -64,6 +72,12 @@ Only after independent runs are frozen, compare them for:
 4. **Blind rerun:** can the result be reproduced without seeing the previous semantic output?
 5. **Provenance audit:** can each important conclusion be traced to source evidence rather than an undeclared prior?
 6. **Cross-passage prediction:** does a decoder make a constraint or prediction that can be tested on material it was not tuned on?
+
+## First historical fixture
+
+`fixtures/voynich/f113r/source.json` is the initial historical fixture scaffold. It remains disabled for evidence-bearing runs until the exact PDF-page mapping, extraction and source freeze are verified.
+
+Synthetic known-answer material remains the required first validation stage for the measurement machinery.
 
 ## Interpretation boundary
 
