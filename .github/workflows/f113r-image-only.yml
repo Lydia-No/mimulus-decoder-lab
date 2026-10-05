@@ -1,0 +1,41 @@
+name: f113r image-only pilot
+
+on:
+  pull_request:
+    paths:
+      - 'fixtures/voynich/f113r/image-only-run-request.json'
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned image dependency
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Fetch and verify frozen Yale source image
+        run: bash scripts/freeze-f113r.sh
+      - name: Run three preregistered image-only decoders
+        run: python historical/image_only_f113r.py /tmp/f113r-freeze/f113r-yale-1006270.jpg /tmp/f113r-image-only
+      - name: Run historical meta-observer
+        run: node historical/compare_image_only.js /tmp/f113r-image-only
+      - name: Show frozen candidate outputs
+        run: |
+          cat /tmp/f113r-image-only/A2.json
+          cat /tmp/f113r-image-only/B5.json
+          cat /tmp/f113r-image-only/C8.json
+          cat /tmp/f113r-image-only/meta-observer.json
+      - name: Upload run bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: f113r-image-only-001
+          path: |
+            /tmp/f113r-freeze/freeze.json
+            /tmp/f113r-image-only/*.json
+          if-no-files-found: error
+          retention-days: 90
