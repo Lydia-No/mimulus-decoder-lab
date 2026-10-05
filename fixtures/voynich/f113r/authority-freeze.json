@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "fixture_id": "voynich-f113r",
   "folio": "f113r",
   "authority": "Beinecke Rare Book and Manuscript Library, Yale University",
@@ -8,9 +8,7 @@
     "url": "https://collections.library.yale.edu/iiif/2/1006270/full/full/0/default.jpg",
     "method": "HTTP GET of Yale IIIF Image API full/full/0/default.jpg",
     "retrieved_by": "GitHub Actions ubuntu-latest",
-    "retrieved_at_utc": "2026-10-05T01:36:50+00:00",
-    "workflow_run_id": 37252093595,
-    "workflow_artifact_id": 11321356211,
+    "initial_retrieved_at_utc": "2026-10-05T01:36:50+00:00",
     "http_content_type": "image/jpeg",
     "etag": null,
     "last_modified": null
@@ -30,5 +28,23 @@
     "iiif_rotation": "0",
     "iiif_quality_format": "default.jpg"
   },
-  "boundary": "This record freezes the exact JPEG bytes returned by the authority IIIF URL at retrieval time. It does not establish a transcription or interpretation."
+  "verification_runs": [
+    {
+      "role": "initial_authority_freeze",
+      "workflow_run_id": 37252093595,
+      "workflow_artifact_id": 11321356211,
+      "retrieved_at_utc": "2026-10-05T01:36:50+00:00",
+      "sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c"
+    },
+    {
+      "role": "independent_rerun_against_recorded_hash",
+      "workflow_run_id": 37252241474,
+      "workflow_artifact_id": 11321466258,
+      "retrieved_at_utc": "2026-10-05T01:38:57+00:00",
+      "sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c",
+      "verification_status": "matched_frozen_hash",
+      "historical_adapter_test": "passed"
+    }
+  ],
+  "boundary": "This record freezes the exact JPEG bytes returned by the authority IIIF URL and records a second authority retrieval that matched the frozen hash. It does not establish a transcription or interpretation."
 }
