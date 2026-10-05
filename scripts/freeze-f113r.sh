@@ -5,6 +5,7 @@ URL='https://collections.library.yale.edu/iiif/2/1006270/full/full/0/default.jpg
 AUTHORITY='Beinecke Rare Book and Manuscript Library, Yale University'
 IMAGE_ID='1006270'
 FOLIO='f113r'
+FIXTURE='fixtures/voynich/f113r/source.json'
 OUT='/tmp/f113r-freeze'
 IMAGE="$OUT/f113r-yale-1006270.jpg"
 HEADERS="$OUT/headers.txt"
@@ -50,11 +51,43 @@ raise SystemExit('JPEG dimensions not found')
 PY
 )
 
+EXPECTED_SHA="$(python3 - "$FIXTURE" <<'PY'
+import json,sys
+try:
+    d=json.load(open(sys.argv[1]))
+    print(d.get('source_layers',{}).get('image',{}).get('sha256','') or '')
+except FileNotFoundError:
+    print('')
+PY
+)"
+EXPECTED_SIZE="$(python3 - "$FIXTURE" <<'PY'
+import json,sys
+try:
+    d=json.load(open(sys.argv[1]))
+    print(d.get('source_layers',{}).get('image',{}).get('byte_size','') or '')
+except FileNotFoundError:
+    print('')
+PY
+)"
+
+VERIFY_STATUS='first_freeze_no_expected_hash'
+if [[ -n "$EXPECTED_SHA" ]]; then
+  if [[ "$SHA256" != "$EXPECTED_SHA" ]]; then
+    echo "Authority image hash drift: expected $EXPECTED_SHA, received $SHA256" >&2
+    exit 1
+  fi
+  VERIFY_STATUS='matched_frozen_hash'
+fi
+if [[ -n "$EXPECTED_SIZE" && "$BYTES" != "$EXPECTED_SIZE" ]]; then
+  echo "Authority image size drift: expected $EXPECTED_SIZE, received $BYTES" >&2
+  exit 1
+fi
+
 ETAG="$(awk 'BEGIN{IGNORECASE=1} /^etag:/{sub(/^[^:]*:[[:space:]]*/,""); sub(/\r$/,""); print; exit}' "$HEADERS" || true)"
 LAST_MODIFIED="$(awk 'BEGIN{IGNORECASE=1} /^last-modified:/{sub(/^[^:]*:[[:space:]]*/,""); sub(/\r$/,""); print; exit}' "$HEADERS" || true)"
 CONTENT_TYPE="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/{sub(/^[^:]*:[[:space:]]*/,""); sub(/\r$/,""); print; exit}' "$HEADERS" || true)"
 
-export URL AUTHORITY IMAGE_ID FOLIO SHA256 BYTES MIME WIDTH HEIGHT ETAG LAST_MODIFIED CONTENT_TYPE
+export URL AUTHORITY IMAGE_ID FOLIO SHA256 BYTES MIME WIDTH HEIGHT ETAG LAST_MODIFIED CONTENT_TYPE VERIFY_STATUS EXPECTED_SHA
 python3 - "$RECORD" <<'PY'
 import json,os,sys,datetime
 record={
@@ -78,6 +111,10 @@ record={
     'mime':os.environ['MIME'],
     'width':int(os.environ['WIDTH']),
     'height':int(os.environ['HEIGHT'])
+  },
+  'freeze_verification':{
+    'status':os.environ['VERIFY_STATUS'],
+    'expected_sha256':os.environ.get('EXPECTED_SHA') or None
   },
   'extraction':{
     'status':'frozen',
