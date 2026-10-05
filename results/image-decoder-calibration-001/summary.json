@@ -1,0 +1,87 @@
+{
+  "calibration_id": "image-decoder-calibration-001",
+  "decoder_version": "image-only-001.0",
+  "seed": 170113,
+  "gate": {
+    "criterion": "each decoder must classify all 8 known-answer claim-condition cells correctly",
+    "passed": false
+  },
+  "scores": {
+    "A2": {"correct": 7, "total": 8, "passed": false},
+    "B5": {"correct": 5, "total": 8, "passed": false},
+    "C8": {"correct": 5, "total": 8, "passed": false}
+  },
+  "failures": [
+    {
+      "condition": "texture_null",
+      "decoder": "A2",
+      "claim": "horizontal-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {"centralBandCount": 50, "centralMedianGapPx": 28.0, "centralGapCv": 0.007480808013267791}
+    },
+    {
+      "condition": "central_disrupted",
+      "decoder": "B5",
+      "claim": "horizontal-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {"centralBestAutocorrelation": 0.6418481246300634, "centralBestLagPx": 8}
+    },
+    {
+      "condition": "texture_null",
+      "decoder": "B5",
+      "claim": "horizontal-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {"centralBestAutocorrelation": 0.9626884952519095, "centralBestLagPx": 21}
+    },
+    {
+      "condition": "texture_null",
+      "decoder": "B5",
+      "claim": "left-margin-discrete-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {"marginBestAutocorrelation": 0.9619583339960488, "marginBestLagPx": 21}
+    },
+    {
+      "condition": "central_disrupted",
+      "decoder": "C8",
+      "claim": "horizontal-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {"activeVerticalBins": 62, "centralCandidateComponents": 720}
+    },
+    {
+      "condition": "texture_null",
+      "decoder": "C8",
+      "claim": "horizontal-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {"activeVerticalBins": 51, "centralCandidateComponents": 1729}
+    },
+    {
+      "condition": "texture_null",
+      "decoder": "C8",
+      "claim": "left-margin-discrete-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {"marginCollapsedLoci": 26, "marginMedianGapPx": 17.0}
+    }
+  ],
+  "controls_that_all_three_classified_correctly": [
+    "positive_structured: both claims",
+    "margin_ablated: both claims"
+  ],
+  "historical_reuse": {
+    "image-only-001.0": "BLOCKED",
+    "reason": "known-answer calibration gate failed"
+  },
+  "raw_result_provenance": {
+    "workflow_run_id": 37379268572,
+    "workflow_merge_ref_sha": "3543f68f9cee9941486acb487035d09071c4f132",
+    "artifact_id": 11373242029,
+    "artifact_zip_sha256": "81b537088755d552c598f4a04ff747ba1a393c6a5f6e909a9012f81370e09d67"
+  },
+  "boundary": "This freezes the known-answer calibration failure. It blocks substantive reuse of image-only-001.0 on f113r and does not alter the already frozen historical run 001."
+}
