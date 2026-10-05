@@ -1,0 +1,132 @@
+{
+  "artifact": "pilot-001-frozen-result-summary",
+  "schema_version": "0.1",
+  "engine": {
+    "path": "pilot/engine.js",
+    "blob_sha": "aa5a5cce53ee848fba773074505c014c9e4e48b7",
+    "pilot_version": "pilot-001.0",
+    "fixture_id": "synthetic-decoder-persistence-001",
+    "fixture_version": "1.0"
+  },
+  "decoder_blind_codes": {
+    "Q7": "local_delta",
+    "L4": "motif_recurrence",
+    "N9": "history_adaptive"
+  },
+  "cells": [
+    {
+      "condition": "original",
+      "history_intervention": "trained",
+      "known_answer": [4, 8],
+      "Q7": [4, 8],
+      "L4": [4, 8],
+      "N9": [],
+      "classification": "DECODER_DEPENDENT_SUPPORTED"
+    },
+    {
+      "condition": "original",
+      "history_intervention": "reset",
+      "known_answer": [4, 8],
+      "Q7": [4, 8],
+      "L4": [4, 8],
+      "N9": [4, 8],
+      "classification": "SOURCE_SUPPORTED_INVARIANT"
+    },
+    {
+      "condition": "original",
+      "history_intervention": "swap",
+      "known_answer": [4, 8],
+      "Q7": [4, 8],
+      "L4": [4, 8],
+      "N9": [],
+      "classification": "DECODER_DEPENDENT_SUPPORTED"
+    },
+    {
+      "condition": "original",
+      "history_intervention": "identical",
+      "known_answer": [4, 8],
+      "Q7": [4, 8],
+      "L4": [4, 8],
+      "N9": [4, 8],
+      "classification": "SOURCE_SUPPORTED_INVARIANT"
+    },
+    {
+      "condition": "permuted",
+      "history_intervention": "trained",
+      "known_answer": [],
+      "Q7": [1,2,3,4,5,6,7,8],
+      "L4": [],
+      "N9": [],
+      "classification": "DECODER_DEPENDENT_UNSUPPORTED"
+    },
+    {
+      "condition": "permuted",
+      "history_intervention": "reset",
+      "known_answer": [],
+      "Q7": [1,2,3,4,5,6,7,8],
+      "L4": [],
+      "N9": [1,2,3,4,5,6,7,8],
+      "classification": "DECODER_DEPENDENT_UNSUPPORTED"
+    },
+    {
+      "condition": "permuted",
+      "history_intervention": "swap",
+      "known_answer": [],
+      "Q7": [1,2,3,4,5,6,7,8],
+      "L4": [],
+      "N9": [],
+      "classification": "DECODER_DEPENDENT_UNSUPPORTED"
+    },
+    {
+      "condition": "permuted",
+      "history_intervention": "identical",
+      "known_answer": [],
+      "Q7": [1,2,3,4,5,6,7,8],
+      "L4": [],
+      "N9": [1,2,3,4,5,6,7,8],
+      "classification": "DECODER_DEPENDENT_UNSUPPORTED"
+    },
+    {
+      "condition": "ablated",
+      "history_intervention": "trained",
+      "known_answer": [4, 8],
+      "Q7": [],
+      "L4": [4, 8],
+      "N9": [],
+      "classification": "DECODER_DEPENDENT_SUPPORTED"
+    },
+    {
+      "condition": "ablated",
+      "history_intervention": "reset",
+      "known_answer": [4, 8],
+      "Q7": [],
+      "L4": [4, 8],
+      "N9": [],
+      "classification": "DECODER_DEPENDENT_SUPPORTED"
+    },
+    {
+      "condition": "ablated",
+      "history_intervention": "swap",
+      "known_answer": [4, 8],
+      "Q7": [],
+      "L4": [4, 8],
+      "N9": [],
+      "classification": "DECODER_DEPENDENT_SUPPORTED"
+    },
+    {
+      "condition": "ablated",
+      "history_intervention": "identical",
+      "known_answer": [4, 8],
+      "Q7": [],
+      "L4": [4, 8],
+      "N9": [],
+      "classification": "DECODER_DEPENDENT_SUPPORTED"
+    }
+  ],
+  "validation": {
+    "cell_count": 12,
+    "tests": "pilot/test.js",
+    "expected_console": "Pilot 001 assertions passed: 12 cells"
+  },
+  "boundary": "Deterministic known-answer validation only. Repeated execution is reproducibility, not independent replication. No cognition, general-theory or Voynich decipherment claim follows."
+}
