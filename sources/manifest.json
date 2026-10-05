@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "sources": [
     {
       "source_id": "beinecke-ms408",
@@ -9,6 +9,18 @@
       "authority_catalog": "https://collections.library.yale.edu/catalog/2002046",
       "folio_catalog_pointers": {
         "f113r": "https://collections.library.yale.edu/catalog/2002046?child_oid=1006270"
+      },
+      "authority_images": {
+        "f113r": {
+          "image_id": "1006270",
+          "iiif_url": "https://collections.library.yale.edu/iiif/2/1006270/full/full/0/default.jpg",
+          "sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c",
+          "byte_size": 2092549,
+          "width": 2582,
+          "height": 3787,
+          "freeze_record": "fixtures/voynich/f113r/authority-freeze.json",
+          "verification": "two authority retrievals matched the frozen hash"
+        }
       },
       "access_copies": [
         {
