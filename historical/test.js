@@ -3,18 +3,28 @@ const fixture=require('../fixtures/voynich/f113r/source.json');
 function assert(ok,msg){if(!ok)throw new Error(msg);}
 
 const current=H.buildHistoricalInput({fixture});
-assert(current.gate.historicalRunAllowed===false,'current f113r fixture must remain blocked until source image freeze');
-assert(current.gate.blockers.includes('SOURCE_IMAGE_NOT_FROZEN'),'current f113r fixture must report missing source-image freeze');
+assert(current.gate.historicalRunAllowed===true,'current f113r source-image gate should be open after authority byte freeze');
+assert(current.gate.blockers.length===0,'image-only f113r input should have no provenance blockers');
+assert(current.source.image.sha256==='ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c','live fixture must retain the authority JPEG hash');
 
-const frozenFixture=JSON.parse(JSON.stringify(fixture));
-frozenFixture.source_layers.image={
+const malformedTranscription={
   status:'frozen',
-  classification:'SOURCE_IMAGE',
-  sha256:'a'.repeat(64),
-  extraction:{status:'frozen',method:'authority-image fixture; exact locator retained',region:'full-folio'}
+  sha256:'not-a-real-sha',
+  convention:'declared-test-convention',
+  version:'test'
 };
-const input=H.buildHistoricalInput({fixture:frozenFixture});
-assert(input.gate.historicalRunAllowed===true,'mock frozen source should open the historical adapter gate');
+const blocked=H.buildHistoricalInput({fixture,transcription:malformedTranscription});
+assert(blocked.gate.historicalRunAllowed===false,'malformed transcription provenance must close the historical gate');
+assert(blocked.gate.blockers.includes('TRANSCRIPTION_PROVENANCE_INCOMPLETE'),'malformed transcription must report its provenance blocker');
+
+const validTranscription={
+  status:'frozen',
+  sha256:'b'.repeat(64),
+  convention:'declared-test-convention',
+  version:'test-1.0'
+};
+const input=H.buildHistoricalInput({fixture,transcription:validTranscription});
+assert(input.gate.historicalRunAllowed===true,'properly frozen transcription provenance should preserve the open historical gate');
 
 const runs=[
   {
@@ -52,4 +62,4 @@ assert(conflict.classification==='INCOMPATIBLE_READINGS','incompatible propositi
 assert(solo.classification==='DECODER_SPECIFIC','single-decoder claim must remain decoder-specific');
 assert(!meta.observations.some(x=>x.classification.includes('SOURCE_SUPPORTED')),'historical comparison must never emit known-answer source-support labels');
 assert(meta.forbiddenInference.includes('SOURCE_SUPPORTED_INVARIANT'),'historical meta-record must explicitly forbid synthetic known-answer inference');
-console.log('Historical adapter assertions passed:',meta.observations.length,'meta-observations; live f113r gate remains closed');
+console.log('Historical adapter assertions passed:',meta.observations.length,'meta-observations; live f113r image gate is open');

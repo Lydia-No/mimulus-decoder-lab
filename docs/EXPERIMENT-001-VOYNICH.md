@@ -1,6 +1,6 @@
 # Experiment 001 — Voynich multi-decoder test
 
-Status: protocol draft
+Status: protocol draft; f113r source-image gate open.
 
 ## Purpose
 
@@ -96,12 +96,14 @@ Only after independent runs are frozen, compare them for:
 
 `fixtures/voynich/f113r/source.json` is the initial historical fixture. Its folio identity is anchored to the Beinecke/Yale catalog object for f113r rather than inferred from access-copy page numbering.
 
-`fixtures/voynich/f113r/reference-observations.json` records secondary descriptive observations separately from direct image evidence. Those observations may be used to design perturbations, but they must be checked against frozen source-image bytes before they are scored as source evidence.
+The full-folio authority image is now frozen from Yale IIIF image id `1006270`. The exact JPEG has SHA-256 `ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c`, dimensions 2582 × 3787, and size 2,092,549 bytes. A second independent authority retrieval matched the recorded hash. The retrieval and verification record is stored in `fixtures/voynich/f113r/authority-freeze.json`.
 
-Synthetic known-answer material remains the required first validation stage for the measurement machinery. The historical run remains gated on both synthetic validation and a frozen f113r image/extraction record.
+This opens the source-image gate for image-only historical inputs. It does not automatically authorize a transcription-derived input: each transcription must separately declare its convention and version and retain its own frozen hash.
 
-The historical adapter is now implemented, but the live f113r gate remains closed until exact source-image bytes and extraction provenance are frozen.
+`fixtures/voynich/f113r/reference-observations.json` records secondary descriptive observations separately from direct image evidence. Those observations may be used to design perturbations, but each must still be checked against the frozen image before being treated as direct source evidence.
+
+Synthetic known-answer material remains the required first validation stage for the measurement machinery and is already frozen as passed. Historical decoder runs must still satisfy the historical adapter, declare decoder provenance, freeze outputs before comparison, and preserve the distinction between source observation and interpretation.
 
 ## Interpretation boundary
 
-A successful run may establish that a decoder is reproducible, source-sensitive, predictive, or unusually invariant. None of those alone establishes that its semantic reading is the historical meaning of the Voynich Manuscript.
+A successful run may establish that a decoder is reproducible, source-sensitive, predictive, or unusually persistent across decoder contexts. None of those alone establishes that its semantic reading is the historical meaning of the Voynich Manuscript.

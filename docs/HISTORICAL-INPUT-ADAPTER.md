@@ -19,7 +19,7 @@ The historical adapter therefore reuses the same separation of source, represent
 3. the image extraction/region record is frozen;
 4. any transcription supplied to a decoder has a declared convention, version and frozen hash.
 
-The current f113r fixture intentionally fails this gate because exact source-image bytes have not yet been frozen.
+The f113r source-image gate now satisfies conditions 1–3. The exact full-folio JPEG returned by Yale IIIF image id `1006270` is frozen at SHA-256 `ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c`. A second authority retrieval matched that hash. Image-only inputs may therefore pass the historical gate; transcription-bearing inputs remain gated on their own transcription provenance.
 
 ## Historical run record
 
@@ -54,18 +54,21 @@ Likewise, cross-decoder residue must not be promoted to `CORRECT_TRANSLATION`, `
 
 ## f113r status
 
-The f113r identity is anchored to the Yale/Beinecke folio object already registered in the fixture. Secondary descriptions remain in `reference-observations.json` and do not open the gate.
+The f113r identity is anchored to the Yale/Beinecke folio object and its source image is frozen separately in `fixtures/voynich/f113r/authority-freeze.json`.
 
-The next required source operation is to freeze exact f113r image bytes plus the extraction record. Only then may decoder inputs be generated from the historical adapter.
+Secondary descriptions remain in `reference-observations.json`. They do not become direct source evidence merely because the image gate is open; each such observation must still be verified against the frozen image before scoring.
 
 ## Validation
 
-`historical/test.js` tests both sides of the gate:
+`historical/test.js` tests both provenance acceptance and comparison semantics:
 
-- the live f113r fixture remains blocked;
-- a mock correctly frozen source opens the adapter;
+- the live authority-frozen f113r image opens the image-only gate;
+- malformed transcription provenance closes the gate;
+- a properly frozen declared transcription preserves an open gate;
 - unanimous historical agreement is classified as residue rather than source truth;
 - incompatible readings remain explicit;
 - decoder-specific claims remain decoder-specific.
+
+The authority-fetch workflow also re-downloads the Yale image and fails if its bytes drift from the recorded hash. The first independent re-fetch matched the frozen hash and the historical adapter assertions passed.
 
 This adapter changes no ArcTopia theory or terminology. Its labels are local experimental bookkeeping.
