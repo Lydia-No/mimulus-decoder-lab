@@ -55,6 +55,23 @@ Each run should return:
 - uncertainty/alternatives;
 - information unavailable to the decoder.
 
+## Historical comparison semantics
+
+The synthetic gate has an independent answer key; the historical Voynich experiment does not.
+
+Therefore the known-answer labels used in Pilot 001, including `SOURCE_SUPPORTED_INVARIANT` and `DECODER_DEPENDENT_SUPPORTED`, are not available to the historical meta-observer.
+
+Historical agreement is described only as persistence or conflict across frozen outputs:
+
+- `CROSS_DECODER_RESIDUE`;
+- `PARTIAL_CROSS_DECODER_RESIDUE`;
+- `DECODER_SPECIFIC`;
+- `INCOMPATIBLE_READINGS`.
+
+These labels are local experimental bookkeeping, not theoretical terms. Agreement does not become correctness merely because multiple decoders produce it.
+
+The executable gate and comparison rules are in `historical/adapter.js`; see `docs/HISTORICAL-INPUT-ADAPTER.md`.
+
 ## Meta-observer pass
 
 Only after independent runs are frozen, compare them for:
@@ -79,9 +96,11 @@ Only after independent runs are frozen, compare them for:
 
 `fixtures/voynich/f113r/source.json` is the initial historical fixture. Its folio identity is anchored to the Beinecke/Yale catalog object for f113r rather than inferred from access-copy page numbering.
 
-`fixtures/voynich/f113r/reference-observations.json` records secondary descriptive observations separately from direct image evidence. Those observations may be used to design perturbations, but they must be checked against frozen source-image bytes before they are scored as source-supported evidence.
+`fixtures/voynich/f113r/reference-observations.json` records secondary descriptive observations separately from direct image evidence. Those observations may be used to design perturbations, but they must be checked against frozen source-image bytes before they are scored as source evidence.
 
 Synthetic known-answer material remains the required first validation stage for the measurement machinery. The historical run remains gated on both synthetic validation and a frozen f113r image/extraction record.
+
+The historical adapter is now implemented, but the live f113r gate remains closed until exact source-image bytes and extraction provenance are frozen.
 
 ## Interpretation boundary
 
