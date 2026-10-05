@@ -1,55 +1,125 @@
-# Mimulus Decoder Lab
+# Mimulus
 
-Experimental framework for testing interpretations of opaque symbolic material across multiple independent decoder contexts.
+Experimental framework for studying observer-conditioned representation: which structures are constrained by a source, which are introduced by a decoder or observer, and which persist when interpretive conditions are varied independently.
 
-The project preserves provenance and distinguishes **semantic plausibility** from **source-constrained evidence**. It is a decoder/meta-observer experiment, not a claim that any target text has been deciphered.
+Mimulus is not primarily a Voynich decoder and does not treat fluent interpretation as evidence of decipherment. The decoder lab is one implementation domain inside a broader meta-observer research program.
 
-## Research question
+## Core research question
 
-When an opaque symbolic sequence is interpreted under multiple independently specified decoder contexts, what structure is stable across interpretations, what depends on the decoder, and what can actually be traced back to constraints in the source?
+Given a fixed source, what changes when the observer changes — and what remains attributable to the source after decoder assumptions, preprocessing choices, context, retained history, and downstream semantic relay are separated and tested?
 
-The immediate experimental target is the Voynich Manuscript. The framework itself is intended to remain target-agnostic.
+A useful abstract model is:
 
-## Boundary
+`R = f(S, D, C, H)`
 
-This repository contains a deliberately bounded public experiment. It does **not** treat fluent output as evidence of a correct translation, and it does not infer a hidden language merely because an interpretation is coherent.
+where:
 
-A candidate reading remains separable into:
+- `S` = source or frozen source representation;
+- `D` = decoder / observer mechanism;
+- `C` = current context, assumptions, preprocessing and prompt conditions;
+- `H` = retained history or prior interaction state;
+- `R` = resulting representation or interpretation.
 
-1. source observations — features directly represented in the input;
-2. decoder assumptions — mappings, grammars, priors, or operators introduced by the decoder;
-3. derived structure — consequences of applying those assumptions;
-4. semantic interpretation — meaning assigned to the derived structure;
-5. cross-decoder residue — features that survive meaningful changes of decoder context.
+Mimulus does not assume that every experiment needs all four variables. Static-source experiments may hold `H` fixed or absent; history-bearing experiments intervene on it explicitly.
 
-The last category is interesting, but still does not by itself establish historical or linguistic truth.
+## What the project separates
 
-## Method
+A candidate interpretation remains decomposable into:
 
-The lab develops a reproducible pipeline around:
+1. **source observation** — what is directly represented in the declared input;
+2. **preprocessing / representation transform** — crop, segmentation, transcription, normalization, tokenization or other derived representation;
+3. **decoder assumptions** — mappings, grammars, priors, operators or inference procedures supplied by the observer;
+4. **derived structure** — consequences of applying those assumptions;
+5. **semantic interpretation** — meaning assigned downstream;
+6. **cross-decoder residue** — structure that survives materially different decoder contexts;
+7. **lineage dependence** — structure inherited from an upstream decoder output rather than recovered independently from the original source.
 
-`source → observation → decoder context → candidate reading → comparison/meta-observation`
+Cross-decoder residue is interesting only when it cannot be explained by shared preprocessing, shared priors, copied semantic conclusions, or a downstream translation relay. It is not automatically historical or linguistic truth.
 
-Multiple decoder contexts should be evaluated independently where possible. Comparison occurs after candidate readings are produced rather than forcing all decoders into a single shared semantic scheme.
+## Independence requirement
 
-## Initial falsification questions
+Survival through transformation is not sufficient evidence.
 
-- Does an apparent pattern survive changes in decoder assumptions?
-- Can the result be reproduced from the same source observations?
-- Does removing a source feature remove the claimed inference?
-- Can a competing decoder generate an equally coherent but incompatible reading?
-- Which parts of a reading are source-constrained, and which are supplied by the interpretive system?
-- Does a claimed invariant survive deliberately adversarial decoder contexts?
+A translation or transformation of a previous decoder output is not an independent decoder of the original source. For two outputs to contribute independent evidence about a source, each must receive the original frozen source (or an independently frozen source representation), its own declared decoder context, and no semantic conclusions from the other run before freeze.
 
-## Voynich experiment
+The project therefore distinguishes:
 
-Voynich material is used here as a difficult test case because the manuscript supports many superficially plausible interpretations. That makes it useful for studying decoder behavior and false semantic convergence.
+`source → decoder A → output A`
 
-Any output in this repository should therefore be read as an **experimental candidate interpretation**, unless independently validated by evidence outside the decoder.
+from
+
+`source → decoder A → output A → translator B → output B`
+
+The second chain may preserve semantics faithfully while contributing no additional independent source evidence.
+
+## Experimental regimes
+
+### 1. Static-source regime
+
+`source → decoder context → representation → comparison`
+
+Question: what changes when the observer changes while the source remains fixed?
+
+Typical interventions include decoder substitution, preprocessing branches, permutation, ablation, null inputs and adversarial alternative decoders.
+
+### 2. History-bearing regime
+
+`source → interaction → changed observer state → later interaction → changed representation`
+
+Question: does prior interaction alter later interpretation in a reproducible, intervention-sensitive way?
+
+History must be tested with controls such as reset, swap, identical-history conditions and known-answer fixtures so apparent improvement or semantic fluency is not mistaken for retained source information.
+
+The two regimes are related but should not be collapsed. Observer history is a candidate causal variable, not a default explanation for decoder disagreement.
+
+## Current implementation domains
+
+### Decoder Lab
+
+Executable and protocol work for comparing explicit decoder contexts, testing provenance, separating agreement from correctness, and measuring cross-decoder persistence.
+
+### Voynich stress test
+
+The Voynich Manuscript is an adversarial opaque-source test case because it supports many superficially plausible interpretations. It is a pilot / stress test, not the identity of Mimulus and not a claimed decipherment.
+
+### PolyTranslator
+
+Controlled multi-decoder experiments using known-answer synthetic fixtures, seeded perturbations, targeted ablation, blind comparison and explicit falsification conditions before moving to opaque material.
+
+### Observer-history / memory experiments
+
+Experiments testing whether retained experience changes later segmentation, interpretation or transition behavior, with reset/swap controls and frozen baselines.
+
+## Falsification orientation
+
+Mimulus is designed so attractive interpretations can fail.
+
+Initial questions include:
+
+- Does an apparent pattern survive materially different decoder assumptions?
+- Does it disappear when the source feature claimed to support it is ablated?
+- Does it survive only because multiple decoders inherited the same preprocessing?
+- Can a competing decoder produce an equally coherent but incompatible account?
+- Can similar structure be recovered from a matched null or perturbed source?
+- Does semantic convergence remain after semantic relay is removed?
+- Does retained history change later output, and does the effect collapse under reset or follow the history under swap?
+
+A result that survives destruction of its alleged source support is not strengthened by that survival. It is evidence that the decoder may be insensitive to the feature it claims to use.
+
+## Current evidence boundary
+
+Mimulus currently has a developing experimental architecture and executable control instruments. It does not yet claim an empirical decipherment result.
+
+The next decisive gate is:
+
+1. a clean known-answer experiment that distinguishes correct recovery from shared wrong agreement; then
+2. a blind opaque-source run with frozen representations, independent decoder contexts, preregistered controls and the possibility of `NO_RESIDUE`.
+
+A successful result would not be `we decoded Voynich`. It would be evidence that Mimulus can distinguish apparent interpretive agreement from structure that remains attributable to the observed source after observer assumptions, preprocessing, history and semantic relay are varied or removed.
 
 ## Status
 
-Early experimental scaffold. Interfaces, fixtures, and tests will be added incrementally. No decipherment claim is made.
+Early experimental research framework. Interfaces, fixtures, controls and tests are being added incrementally. No decipherment claim is made.
 
 ## Authorship
 
