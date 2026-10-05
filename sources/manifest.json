@@ -6,11 +6,16 @@
       "object": "Voynich Manuscript",
       "shelfmark": "Beinecke MS 408",
       "authority": "Beinecke Rare Book and Manuscript Library, Yale University",
+      "authority_catalog": "https://collections.library.yale.edu/catalog/2002046",
+      "folio_catalog_pointers": {
+        "f113r": "https://collections.library.yale.edu/catalog/2002046?child_oid=1006270"
+      },
       "access_copies": [
         {
           "kind": "pdf",
           "url": "https://dn721207.ca.archive.org/0/items/TheVoynichManuscript/Voynich_Manuscript.pdf",
           "provenance_note": "Access pointer supplied for the Mimulus Voynich experiment.",
+          "reported_page_count": 209,
           "sha256": null,
           "hash_status": "pending_exact_byte_acquisition"
         }
@@ -24,6 +29,7 @@
         "translations": "CANDIDATE_INTERPRETATION"
       },
       "notes": [
+        "Folio identity should be anchored to the holding institution's catalog when available; access-copy page numbering is a transport detail, not source identity.",
         "Do not treat a transcription as identical to the source artifact.",
         "Do not promote decoder agreement to historical or linguistic truth without independent evidence."
       ]
