@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/freeze-f113r.yml'
       - 'scripts/freeze-f113r.sh'
+      - 'fixtures/voynich/f113r/**'
 
 permissions:
   contents: read
