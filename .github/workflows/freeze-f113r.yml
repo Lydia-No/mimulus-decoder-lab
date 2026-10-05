@@ -1,0 +1,29 @@
+name: Freeze f113r authority image
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/freeze-f113r.yml'
+      - 'scripts/freeze-f113r.sh'
+
+permissions:
+  contents: read
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch Yale IIIF image and compute freeze record
+        run: bash scripts/freeze-f113r.sh
+      - name: Show freeze record
+        run: cat /tmp/f113r-freeze/freeze.json
+      - name: Upload freeze record and exact fetched JPEG
+        uses: actions/upload-artifact@v4
+        with:
+          name: f113r-authority-freeze
+          path: |
+            /tmp/f113r-freeze/freeze.json
+            /tmp/f113r-freeze/f113r-yale-1006270.jpg
+          if-no-files-found: error
+          retention-days: 90
