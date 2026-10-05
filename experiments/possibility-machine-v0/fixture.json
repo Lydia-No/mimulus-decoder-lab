@@ -1,0 +1,63 @@
+{
+  "id": "possibility-machine-v0",
+  "status": "synthetic-known-answer",
+  "canonical": false,
+  "purpose": "Test whether forward, inverse, intervention and verification views preserve the distinction between present state and trajectory-dependent future reachability.",
+  "factors": ["A", "B", "C", "D"],
+  "initial_state": "0000",
+  "raw_state_count": 16,
+  "rules": [
+    {
+      "id": "set_a",
+      "precondition": "A=0",
+      "effect": "A:=1"
+    },
+    {
+      "id": "set_b",
+      "precondition": "B=0",
+      "effect": "B:=1"
+    },
+    {
+      "id": "set_c",
+      "precondition": "C=0 and A=1 and B=1",
+      "effect": "C:=1"
+    },
+    {
+      "id": "set_d",
+      "precondition": "D=0 and C=1 and set_a occurred before set_b",
+      "effect": "D:=1"
+    }
+  ],
+  "known_answer": {
+    "reachable_current_states": ["0000", "0100", "1000", "1100", "1110", "1111"],
+    "reachable_state_history_nodes": 8,
+    "convergent_states": {
+      "1100": [
+        ["set_a", "set_b"],
+        ["set_b", "set_a"]
+      ],
+      "1110": [
+        ["set_a", "set_b", "set_c"],
+        ["set_b", "set_a", "set_c"]
+      ]
+    },
+    "path_sensitive_witness": {
+      "present_state": "1110",
+      "history_with_future_D": ["set_a", "set_b", "set_c"],
+      "history_without_future_D": ["set_b", "set_a", "set_c"],
+      "target_state": "1111"
+    },
+    "inverse_observation": {
+      "observed_state": "1110",
+      "compatible_histories": 2,
+      "histories_disagree_on_future_D_reachability": true
+    },
+    "invariants": [
+      "C=1 implies A=1 and B=1",
+      "D=1 implies C=1",
+      "1111 is reachable only through a history in which set_a precedes set_b",
+      "identical present state does not imply identical future reachability"
+    ]
+  },
+  "boundary": "This fixture is a synthetic test object only. It is not a Mimulus ontology, ArcTopia theory claim, or model of a historical source."
+}
