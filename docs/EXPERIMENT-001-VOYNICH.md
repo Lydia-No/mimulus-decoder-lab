@@ -14,7 +14,9 @@ This experiment follows `docs/SOURCE-PROVENANCE.md`.
 
 For evidence about what is visibly present, the manuscript image outranks any transcription, normalization, segmentation or decoder representation. A transcription is a declared representation of the source, not the source itself.
 
-A fixture is not enabled for evidence-bearing runs until its source pointer, folio/region mapping, extraction procedure and relevant provenance fields are frozen. Do not invent or backfill hashes that were not computed from acquired bytes.
+A fixture is not enabled for evidence-bearing runs until its source pointer, folio/region identity, extraction procedure and relevant provenance fields are frozen. Do not invent or backfill hashes that were not computed from acquired bytes.
+
+Access-copy pagination is not source identity. Where an authoritative folio-level catalog pointer exists, use it to anchor the folio independently of a particular PDF's page numbering.
 
 ## Inputs
 
@@ -75,9 +77,11 @@ Only after independent runs are frozen, compare them for:
 
 ## First historical fixture
 
-`fixtures/voynich/f113r/source.json` is the initial historical fixture scaffold. It remains disabled for evidence-bearing runs until the exact PDF-page mapping, extraction and source freeze are verified.
+`fixtures/voynich/f113r/source.json` is the initial historical fixture. Its folio identity is anchored to the Beinecke/Yale catalog object for f113r rather than inferred from access-copy page numbering.
 
-Synthetic known-answer material remains the required first validation stage for the measurement machinery.
+`fixtures/voynich/f113r/reference-observations.json` records secondary descriptive observations separately from direct image evidence. Those observations may be used to design perturbations, but they must be checked against frozen source-image bytes before they are scored as source-supported evidence.
+
+Synthetic known-answer material remains the required first validation stage for the measurement machinery. The historical run remains gated on both synthetic validation and a frozen f113r image/extraction record.
 
 ## Interpretation boundary
 
