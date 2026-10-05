@@ -46,13 +46,13 @@ The frozen result is treated as a prospective gate: historical outputs do not re
 
 ## Historical adapter
 
-`historical/adapter.js` now implements the bounded transition from the known-answer synthetic gate to historical material.
+`historical/adapter.js` implements the bounded transition from the known-answer synthetic gate to historical material.
 
 The historical adapter deliberately does **not** reuse known-answer result labels. Voynich has no independent answer key, so unanimous decoder agreement is recorded only as `CROSS_DECODER_RESIDUE`; partial agreement, decoder-specific claims and incompatible readings remain distinct.
 
-The current f113r fixture is still blocked from evidence-bearing runs because the exact source-image bytes and extraction record have not yet been frozen. The adapter test confirms both the closed live gate and the behavior of a mock correctly frozen source.
+The f113r source-image gate is now open. The full-folio JPEG was fetched directly from Yale's IIIF Image API, frozen at SHA-256 `ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c`, and independently fetched again with the same hash. The image is 2582 × 3787 pixels and 2,092,549 bytes. Any transcription supplied to a decoder still requires its own declared convention, version and frozen hash.
 
-See `docs/HISTORICAL-INPUT-ADAPTER.md`.
+See `docs/HISTORICAL-INPUT-ADAPTER.md` and `fixtures/voynich/f113r/authority-freeze.json`.
 
 ## Initial falsification questions
 
@@ -69,11 +69,11 @@ Voynich material is used here as a difficult test case because the manuscript su
 
 Any output in this repository should therefore be read as an **experimental candidate interpretation**, unless independently validated by evidence outside the decoder.
 
-Historical source handling is governed by `docs/SOURCE-PROVENANCE.md`. The first historical fixture, `f113r`, remains separately gated from the synthetic measurement validation.
+Historical source handling is governed by `docs/SOURCE-PROVENANCE.md`. The first historical fixture, `f113r`, now has a frozen authority image; historical decoder runs must still preserve declared representations, decoder provenance and frozen outputs before comparison.
 
 ## Status
 
-Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The live f113r evidence-bearing gate remains closed pending exact source-image byte and extraction freeze. No decipherment claim is made.
+Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The f113r authority image is frozen and independently re-verified, so image-only historical inputs can now pass the source gate. No decipherment claim is made.
 
 ## Authorship
 
