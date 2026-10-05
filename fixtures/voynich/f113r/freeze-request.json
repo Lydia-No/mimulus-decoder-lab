@@ -1,0 +1,7 @@
+{
+  "fixture_id": "voynich-f113r",
+  "authority_image_id": "1006270",
+  "authority_iiif_url": "https://collections.library.yale.edu/iiif/2/1006270/full/full/0/default.jpg",
+  "purpose": "Trigger the repository provenance workflow to freeze the exact authority JPEG bytes before evidence-bearing historical runs.",
+  "status": "requested"
+}
