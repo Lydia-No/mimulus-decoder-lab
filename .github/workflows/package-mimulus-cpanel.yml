@@ -1,0 +1,60 @@
+name: Package Mimulus cPanel bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "explorer/index.html"
+      - "hosting/cpanel/**"
+      - ".github/workflows/package-mimulus-cpanel.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build upload-ready bundle
+        run: |
+          set -euo pipefail
+          rm -rf bundle
+          mkdir -p bundle/api
+          cp explorer/index.html bundle/index.html
+          cp hosting/cpanel/.htaccess bundle/.htaccess
+          cp hosting/cpanel/api/explore.php bundle/api/explore.php
+          cp hosting/cpanel/api/config.example.php bundle/api/config.example.php
+          cat > bundle/README_SETUP.txt <<'EOF'
+          Mimulus Explorer — cPanel deployment
+
+          Target: mimulus.arctopia.no
+          Document root: /public_html/Mimulus/
+
+          1. Create the subdomain in cPanel with document root /public_html/Mimulus/.
+          2. Upload the contents of this bundle into /public_html/Mimulus/ (not a nested folder).
+          3. In api/, duplicate config.example.php as config.php.
+          4. Edit ONLY the server-side api/config.php and add the OpenAI API key.
+          5. Optional but recommended for a public URL: set EXPLORER_TOKEN in config.php.
+          6. Never commit the filled config.php to GitHub.
+          7. Test https://mimulus.arctopia.no with a small text-only run first, then an image.
+
+          Expected layout:
+            /public_html/Mimulus/index.html
+            /public_html/Mimulus/.htaccess
+            /public_html/Mimulus/api/explore.php
+            /public_html/Mimulus/api/config.php
+          EOF
+          cd bundle
+          zip -qr ../mimulus-cpanel.zip .
+
+      - name: Upload cPanel ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: mimulus-cpanel
+          path: mimulus-cpanel.zip
+          if-no-files-found: error
+          retention-days: 14
