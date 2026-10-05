@@ -1,0 +1,43 @@
+{
+  "fixture_id": "synthetic-decoder-persistence-001",
+  "version": "1.0",
+  "status": "known_answer_frozen",
+  "purpose": "Test whether a meta-observer can distinguish source-supported persistence from decoder-dependent and unsupported structure before historical material is enabled.",
+  "source": [2, 2, 3, 3, 8, 8, 7, 7, 2, 2, 3, 3],
+  "generating_structure": {
+    "description": "Three four-value blocks arranged A-B-A.",
+    "block_A": [2, 2, 3, 3],
+    "block_B": [8, 8, 7, 7],
+    "boundary_indices_zero_based": [4, 8]
+  },
+  "conditions": {
+    "original": {
+      "values": [2, 2, 3, 3, 8, 8, 7, 7, 2, 2, 3, 3],
+      "answer_key_boundaries": [4, 8],
+      "role": "unaltered known-answer source"
+    },
+    "permuted": {
+      "values": [2, 8, 3, 7, 2, 8, 3, 7, 2, 3, 2, 3],
+      "answer_key_boundaries": [],
+      "role": "count-preserving order destruction",
+      "note": "Symbol/value counts are preserved while the A-B-A block organization is deliberately destroyed."
+    },
+    "ablated": {
+      "values": [2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3],
+      "answer_key_boundaries": [4, 8],
+      "role": "targeted middle-block contrast ablation",
+      "note": "The intervention preserves the known block positions while removing the large local contrast that one decoder family relies on."
+    }
+  },
+  "history_training": {
+    "quiet": [1, 2, 1, 2, 1, 2],
+    "volatile": [1, 9, 2, 8, 1, 9],
+    "update_rule": "retain mean absolute adjacent change"
+  },
+  "boundaries": {
+    "synthetic_only": true,
+    "no_semantic_claim": true,
+    "no_voynich_claim": true,
+    "no_general_theory_inference": true
+  }
+}
