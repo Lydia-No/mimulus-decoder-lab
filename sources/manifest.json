@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "sources": [
+    {
+      "source_id": "beinecke-ms408",
+      "object": "Voynich Manuscript",
+      "shelfmark": "Beinecke MS 408",
+      "authority": "Beinecke Rare Book and Manuscript Library, Yale University",
+      "access_copies": [
+        {
+          "kind": "pdf",
+          "url": "https://dn721207.ca.archive.org/0/items/TheVoynichManuscript/Voynich_Manuscript.pdf",
+          "provenance_note": "Access pointer supplied for the Mimulus Voynich experiment.",
+          "sha256": null,
+          "hash_status": "pending_exact_byte_acquisition"
+        }
+      ],
+      "representation_policy": {
+        "image_scan": "SOURCE_IMAGE",
+        "folio_labels": "SOURCE_METADATA",
+        "transcriptions": "TRANSCRIPTION",
+        "segmentation": "PREPROCESSING",
+        "decoder_outputs": "DERIVED_STRUCTURE",
+        "translations": "CANDIDATE_INTERPRETATION"
+      },
+      "notes": [
+        "Do not treat a transcription as identical to the source artifact.",
+        "Do not promote decoder agreement to historical or linguistic truth without independent evidence."
+      ]
+    }
+  ]
+}
