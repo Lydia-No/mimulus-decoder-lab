@@ -1,0 +1,41 @@
+{
+  "fixture_id": "voynich-f113r",
+  "status": "scaffold",
+  "source_id": "beinecke-ms408",
+  "folio": "f113r",
+  "source_region": {
+    "kind": "folio",
+    "page_mapping_status": "pending_verified_pdf_mapping",
+    "crop": null
+  },
+  "source_layers": {
+    "image": {
+      "status": "pending_extraction_from_verified_access_copy",
+      "classification": "SOURCE_IMAGE"
+    },
+    "folio_metadata": {
+      "classification": "SOURCE_METADATA"
+    },
+    "transcriptions": [],
+    "layout_observations": [],
+    "preprocessing": []
+  },
+  "experimental_boundary": {
+    "allow_semantic_claims_before_source_freeze": false,
+    "allow_silent_glyph_normalization": false,
+    "allow_transcription_as_source_substitute": false,
+    "require_decoder_provenance": true,
+    "require_frozen_runs_before_meta_comparison": true
+  },
+  "planned_conditions": [
+    "unaltered_source",
+    "declared_transcription_variants",
+    "targeted_feature_ablation",
+    "structure-disrupting_permutation_where_applicable",
+    "blind_rerun"
+  ],
+  "notes": [
+    "No translation or decipherment claim is encoded in this fixture.",
+    "Exact PDF page mapping, extraction coordinates and byte hashes must be verified before the folio is enabled for evidence-bearing runs."
+  ]
+}
