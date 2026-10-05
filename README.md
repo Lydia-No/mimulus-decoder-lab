@@ -40,7 +40,9 @@ Three materially different decoder families inspect the same frozen synthetic so
 
 The pilot is deliberately synthetic. Passing it does not validate transport to Voynich; it only establishes that the implementation can preserve the distinctions the historical experiment requires.
 
-See `docs/PILOT-001-DECODER-PERSISTENCE.md` and `pilot/README.md`.
+See `docs/PILOT-001-DECODER-PERSISTENCE.md`, `pilot/README.md`, and the frozen result bundle in `results/pilot-001/`.
+
+The frozen result is treated as a prospective gate: historical outputs do not retroactively change the Pilot 001 answer key, decoder behavior or result classification.
 
 ## Initial falsification questions
 
@@ -61,7 +63,7 @@ Historical source handling is governed by `docs/SOURCE-PROVENANCE.md`. The first
 
 ## Status
 
-Active experimental scaffold. Pilot 001 is a deterministic known-answer measurement test; historical decoder runs remain gated. No decipherment claim is made.
+Active experimental scaffold. Pilot 001 is a deterministic known-answer measurement test with a frozen result bundle; historical decoder runs remain gated. No decipherment claim is made.
 
 ## Authorship
 
