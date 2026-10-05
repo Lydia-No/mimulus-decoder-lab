@@ -1,0 +1,39 @@
+# Mimulus Decoder Lab — Experiment 001 Source 001
+# Frozen source selection: f1r
+# Selection rule: first manuscript folio in the published Reference Transliteration; chosen before semantic analysis.
+# Source: R. Zandbergen Reference Transliteration RF1a-n, IVTFF/EVA, retrieved 2026-10-05.
+# Upstream: https://www.voynich.nu/data/previous/RF1a-n.txt
+# Important: punctuation and uncertainty markers are preserved as published. Do not silently normalize.
+
+<f1r>      <! $Q=A $P=A $F=a $B=1 $I=T $L=A $H=1 $C=1 $X=V>
+<f1r.1,@P0>       fachys.ykal.ar.ataiin.shol.shory.ctoses.y.kor.sholdy
+<f1r.2,+P0>       sory.ckhar.ory.kair.chtaiin.shar.ais.cthar.cthar.dan
+<f1r.3,+P0>       syaiir.sheky.or.ykaiin.shod.cthoary.cthes.daraiin.sy
+<f1r.4,+P0>       soiin.oteey.oteor.roloty.ctaar.daiin.okaiin.or.okan
+<f1r.5,+P0>       sairy.chear.cthaiin.cphar.cfhaiin
+<f1r.6,=Pt>       ydaraishy
+<f1r.7,*P0>       odar.sy.shol.cphoy.oydar.sh,s.cfhoaiin.shodary
+<f1r.8,+P0>       yshey.shody.okchoy.otchol.chocthy.oschy.dain.chor.kos
+<f1r.9,+P0>       daiin.shos.cfhol.shody
+<f1r.10,=Pt>      dain.or.teody
+<f1r.11,*P0>      ydain.cphesaiin.ols.cphey.ytain.shoshy.cphodal.es
+<f1r.12,+P0>      oksho.kshoy.otairin.oteol.okan.shodain.sckchy.daiin
+<f1r.13,+P0>      shoy.ckhey.kodaiin.cphy.cphodaiils.cthhy.sho.oldain.d
+<f1r.14,+P0>      dain.oiin.chol.odaiin.chodain.chdy.okain.dan.cthy.kod
+<f1r.15,+P0>      daiin.shckhey.ckho,r.char.shey.kol.chol.chol.kor.chal
+<f1r.16,+P0>      sho.chol.shodan.kshy.kchy.d,or.chodaiin.sho.keeam
+<f1r.17,+P0>      ycho.tchey.chekain.sheopshol.dydyd.cthy.daictoy
+<f1r.18,+P0>      yto.shol.she.kodshey.cphealy.dar.ain.dain.ckhyds
+<f1r.19,+P0>      dchar.shcthaiin.okaiir.chey.rchy.potol.cthols.dlocto
+<f1r.20,+P0>      shok.chor.chey.dain.ckhey
+<f1r.21,=Pt>      otol.daiiin
+<f1r.22,*P0>      cpho.shaiin.shokcheey.chol.tshodeesy.shey.pydeey.chy.ro.dar
+<f1r.23,+P0>      ydain.chol.dain.cthal.dar.shear.kaiin.dar.shey.cthar
+<f1r.24,+P0>      cho,?o.kaiin.shoaiin.okol.daiin.par.cthol.daiin.ctholdar
+<f1r.25,+P0>      ycheey.okeey.oky.daiin.okchey.kokaiin.o?chol.kadchy.dal
+<f1r.26,+P0>      dcheo.shody.koechy.cthy.okchey.keey.keey.dal.chtor
+<f1r.27,+P0>      sho?.chol.chckh.choty.chotey
+<f1r.28,=Pt>      dchaiin
+<f1r.29,@Lx>      d
+<f1r.30,+Lx>      r
+<f1r.31,@Lx>      g
