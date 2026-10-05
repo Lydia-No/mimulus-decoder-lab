@@ -62,7 +62,21 @@ The run produced `INCOMPATIBLE_READINGS` on both preregistered structural questi
 
 See `docs/F113R-IMAGE-ONLY-PILOT.md` and `results/f113r-image-only-001/RESULT.md`.
 
-The next gate is an image-specific known-answer calibration set with positive, ablation, order-disruption and texture/null controls before any versioned rerun on f113r.
+## Image decoder calibration 001
+
+The frozen `image-only-001.0` decoder set was subsequently tested against preregistered known-answer image controls rather than tuned on f113r.
+
+The strict gate failed:
+
+- A2: 7/8;
+- B5: 5/8;
+- C8: 5/8.
+
+All three produced a false horizontal-repetition signal on the texture/null control; B5 and C8 also produced false margin-repetition signals there. B5 and C8 additionally failed the central-disruption horizontal control.
+
+`image-only-001.0` is therefore **blocked from further substantive historical reuse**. A replacement version must be developed on synthetic material and then pass a separate prospective held-out synthetic set before another f113r run.
+
+See `docs/IMAGE-DECODER-CALIBRATION-001.md` and `results/image-decoder-calibration-001/RESULT.md`.
 
 ## Initial falsification questions
 
@@ -83,7 +97,7 @@ Historical source handling is governed by `docs/SOURCE-PROVENANCE.md`. The first
 
 ## Status
 
-Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The f113r authority image is frozen and independently re-verified. The first preregistered image-only historical run is frozen with incompatible decoder readings and a documented calibration requirement. No decipherment claim is made.
+Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The f113r authority image is frozen and independently re-verified. The first preregistered image-only historical run is frozen with incompatible decoder readings. Its decoder version subsequently failed the known-answer calibration gate and is blocked from historical reuse pending a versioned replacement and held-out synthetic validation. No decipherment claim is made.
 
 ## Authorship
 
