@@ -6,6 +6,7 @@ on:
       - '.github/workflows/freeze-f113r.yml'
       - 'scripts/freeze-f113r.sh'
       - 'fixtures/voynich/f113r/**'
+      - 'historical/**'
 
 permissions:
   contents: read
@@ -17,6 +18,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Fetch Yale IIIF image and compute freeze record
         run: bash scripts/freeze-f113r.sh
+      - name: Validate historical adapter gate
+        run: node historical/test.js
       - name: Show freeze record
         run: cat /tmp/f113r-freeze/freeze.json
       - name: Upload freeze record and exact fetched JPEG
