@@ -24,6 +24,12 @@
     "reference_observations": "reference-observations.json",
     "preprocessing": []
   },
+  "historical_adapter": {
+    "path": "historical/adapter.js",
+    "protocol": "docs/HISTORICAL-INPUT-ADAPTER.md",
+    "status": "blocked_pending_source_image_freeze",
+    "known_answer_classifications_allowed": false
+  },
   "experimental_boundary": {
     "allow_semantic_claims_before_source_freeze": false,
     "allow_silent_glyph_normalization": false,
@@ -43,6 +49,7 @@
   "notes": [
     "No translation or decipherment claim is encoded in this fixture.",
     "The Yale child-object pointer anchors folio identity independently of access-copy PDF pagination.",
-    "Exact source-image bytes and any image-dependent extraction coordinates must still be frozen before evidence-bearing historical runs."
+    "Exact source-image bytes and any image-dependent extraction coordinates must still be frozen before evidence-bearing historical runs.",
+    "Historical cross-decoder agreement is recorded as residue or conflict, not as source-supported truth, because there is no independent Voynich answer key."
   ]
 }
