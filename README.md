@@ -44,6 +44,16 @@ See `docs/PILOT-001-DECODER-PERSISTENCE.md`, `pilot/README.md`, and the frozen r
 
 The frozen result is treated as a prospective gate: historical outputs do not retroactively change the Pilot 001 answer key, decoder behavior or result classification.
 
+## Historical adapter
+
+`historical/adapter.js` now implements the bounded transition from the known-answer synthetic gate to historical material.
+
+The historical adapter deliberately does **not** reuse known-answer result labels. Voynich has no independent answer key, so unanimous decoder agreement is recorded only as `CROSS_DECODER_RESIDUE`; partial agreement, decoder-specific claims and incompatible readings remain distinct.
+
+The current f113r fixture is still blocked from evidence-bearing runs because the exact source-image bytes and extraction record have not yet been frozen. The adapter test confirms both the closed live gate and the behavior of a mock correctly frozen source.
+
+See `docs/HISTORICAL-INPUT-ADAPTER.md`.
+
 ## Initial falsification questions
 
 - Does an apparent pattern survive changes in decoder assumptions?
@@ -63,7 +73,7 @@ Historical source handling is governed by `docs/SOURCE-PROVENANCE.md`. The first
 
 ## Status
 
-Active experimental scaffold. Pilot 001 is a deterministic known-answer measurement test with a frozen result bundle; historical decoder runs remain gated. No decipherment claim is made.
+Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The live f113r evidence-bearing gate remains closed pending exact source-image byte and extraction freeze. No decipherment claim is made.
 
 ## Authorship
 
