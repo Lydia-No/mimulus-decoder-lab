@@ -1,0 +1,43 @@
+name: Image-only v3 held-out gate
+
+on:
+  pull_request:
+    paths:
+      - 'requests/image-v3-heldout-run.json'
+
+permissions:
+  contents: read
+
+jobs:
+  heldout:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen v3 decoder blob
+        run: |
+          actual=$(git hash-object historical/image_decoders_v3.py)
+          expected=24cd6a61c1744657ef6bbd62b14ee47a0afb8c8d
+          echo "decoder_blob=$actual"
+          test "$actual" = "$expected"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned image dependency
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Run fresh v3 holdout and preserve result
+        run: |
+          mkdir -p /tmp/image-v3-heldout
+          set +e
+          python historical/image_v3_holdout.py /tmp/image-v3-heldout
+          code=$?
+          echo "$code" > /tmp/image-v3-heldout/exit-code.txt
+          exit 0
+      - name: Upload v3 held-out result
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-only-v3-heldout-001
+          path: /tmp/image-v3-heldout/*
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce v3 held-out gate
+        run: test "$(cat /tmp/image-v3-heldout/exit-code.txt)" = "0"
