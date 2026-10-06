@@ -34,7 +34,7 @@ async function analyze(payload){
  let tokens=original,reference=null;
  if(payload.mode==='known'){
   const encoder=rules(payload.encoder,'Encoder');
-  if(typeof (payload.allow_lossy??false)!=='boolean')throw Error('Lossy encoding must be explicitly selected');
+  if(typeof (payload.allow_lossy===undefined?false:payload.allow_lossy)!=='boolean')throw Error('Lossy encoding must be explicitly selected');
   if(original.some(t=>!owns(encoder,t)))throw Error('Encoder has no mapping for one or more original tokens');
   if(!payload.allow_lossy&&new Set(Object.values(encoder)).size!==Object.keys(encoder).length)throw Error('Many-to-one codebook requires explicit lossy selection');
   tokens=original.map(t=>encoder[t]);reference={original_tokens:original,encoded_tokens:tokens,codebook:Object.entries(encoder)};

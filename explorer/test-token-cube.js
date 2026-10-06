@@ -17,6 +17,7 @@ const {analyze,inspect}=require('./token-cube.js');
  assert(opaque.hypercube.nodes.every(n=>n.recovery===null));assert.equal(opaque.reference,null);
  const repeated=await analyze({...payload,source:'sun\nwater sun\tstone'});assert.equal(repeated.observation.source_id,r.observation.source_id);
  await assert.rejects(analyze({...payload,encoder:{sun:'q',water:'q',stone:'z'}}),/lossy/);
+ await assert.rejects(analyze({...payload,allow_lossy:null}),/explicitly selected/);
  const lossy=await analyze({...payload,encoder:{sun:'q',water:'q',stone:'z'},allow_lossy:true});assert.equal(lossy.results[0].recovery.token_accuracy,.75);
  const odd=await analyze({mode:'opaque',source:'__proto__ q',decoder_a:JSON.parse('{"__proto__":"sun","q":"water"}'),decoder_b:{}});assert.equal(odd.results[0].reading.semantic_reading,'sun water');
  // Compare actual Python decoder scores/mappings for every context, not just graph shape.
