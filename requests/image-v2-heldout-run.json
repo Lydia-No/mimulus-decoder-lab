@@ -3,5 +3,6 @@
   "decoder_blob_sha": "75207864d07573edf53fe29b321381e732347b91",
   "historical_input": false,
   "holdout": true,
+  "attempt": 1,
   "note": "Run the prospective held-out synthetic gate with the frozen decoder blob."
 }
