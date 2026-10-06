@@ -1,0 +1,16 @@
+{
+  "development_id": "image-only-v3-development-001",
+  "decoder_version": "image-only-003.0-dev",
+  "decoder_blob_sha": "24cd6a61c1744657ef6bbd62b14ee47a0afb8c8d",
+  "workflow_run_id": 37399090524,
+  "artifact_id": 11384197804,
+  "artifact_zip_sha256": "46aceeedb67ab7cd46534fe1634cb8622bd7b97e99d1c42b217050728113a1f9",
+  "scores": {
+    "A3": {"correct": 32, "total": 32, "passed": true},
+    "B7": {"correct": 32, "total": 32, "passed": true},
+    "C9": {"correct": 32, "total": 32, "passed": true}
+  },
+  "gate_passed": true,
+  "historical_use_authorized": false,
+  "boundary": "Development only. The decoder blob above is frozen before creation of a fresh v3 held-out set."
+}
