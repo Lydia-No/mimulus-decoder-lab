@@ -74,9 +74,29 @@ The strict gate failed:
 
 All three produced a false horizontal-repetition signal on the texture/null control; B5 and C8 also produced false margin-repetition signals there. B5 and C8 additionally failed the central-disruption horizontal control.
 
-`image-only-001.0` is therefore **blocked from further substantive historical reuse**. A replacement version must be developed on synthetic material and then pass a separate prospective held-out synthetic set before another f113r run.
+`image-only-001.0` is therefore **blocked from further substantive historical reuse**.
 
 See `docs/IMAGE-DECODER-CALIBRATION-001.md` and `results/image-decoder-calibration-001/RESULT.md`.
+
+## Image-only v2 development and held-out gate
+
+A versioned replacement, `image-only-002.0-dev`, was developed entirely on synthetic material. It specifically addressed the v1 texture false-positive failure by requiring macro structure rather than generic periodicity.
+
+Its three new families were A3 (macro horizontal-run bands), B6 (smoothed gradient periodicity plus spatial concentration), and C9 (macro connected-component row clustering). On the declared development set all three scored 16/16, for 48/48 cells total.
+
+The candidate decoder file was then frozen at Git blob `75207864d07573edf53fe29b321381e732347b91` before a separately generated held-out set was introduced. The held-out workflow verified that exact blob before execution.
+
+The held-out result was:
+
+- A3: 20/20 — PASS;
+- B6: 17/20 — FAIL;
+- C9: 20/20 — PASS.
+
+All three B6 misses were true margin-repetition cases whose strongest valid lags were 130 or 138 px, above B6's frozen absolute upper lag bound of 120 px. The v1 periodic-texture false-positive failure did not recur. This isolates a different transport problem: the fixed absolute margin-lag range did not generalize across held-out scale.
+
+Because the prospective gate required every decoder to score 20/20, `image-only-002.0-dev` is **blocked from historical use**. It will not be rerun on f113r. Any successor must receive a new version and a new future holdout; the failed held-out set cannot be used as the validation set for a decoder tuned from its failures.
+
+See `docs/IMAGE-ONLY-V2-DEVELOPMENT.md`, `docs/IMAGE-ONLY-V2-HELDOUT.md`, `results/image-only-v2-development-001/`, and `results/image-only-v2-heldout-001/`.
 
 ## Initial falsification questions
 
@@ -97,7 +117,7 @@ Historical source handling is governed by `docs/SOURCE-PROVENANCE.md`. The first
 
 ## Status
 
-Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The f113r authority image is frozen and independently re-verified. The first preregistered image-only historical run is frozen with incompatible decoder readings. Its decoder version subsequently failed the known-answer calibration gate and is blocked from historical reuse pending a versioned replacement and held-out synthetic validation. No decipherment claim is made.
+Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The f113r authority image is frozen and independently re-verified. The first preregistered image-only historical run remains frozen with incompatible decoder readings. Both subsequent image-decoder generations have been prevented from further historical use by prospective synthetic gates: v1 failed known-answer calibration, while v2 passed development but failed its separately frozen held-out gate. No decipherment claim is made.
 
 ## Authorship
 
