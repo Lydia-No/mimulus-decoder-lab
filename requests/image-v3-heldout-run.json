@@ -1,0 +1,6 @@
+{
+  "request": "image-only-v3-heldout-001",
+  "decoder_blob_sha": "24cd6a61c1744657ef6bbd62b14ee47a0afb8c8d",
+  "historical_input": false,
+  "holdout": true
+}
