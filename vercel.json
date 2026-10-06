@@ -4,6 +4,18 @@
     {
       "source": "/",
       "destination": "/explorer/index.html"
+    },
+    {
+      "source": "/hypercube.html",
+      "destination": "/explorer/hypercube.html"
+    },
+    {
+      "source": "/token-cube.js",
+      "destination": "/explorer/token-cube.js"
+    },
+    {
+      "source": "/cube-view.js",
+      "destination": "/explorer/cube-view.js"
     }
   ],
   "functions": {
@@ -15,8 +27,14 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "no-referrer" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
       ]
     }
   ]

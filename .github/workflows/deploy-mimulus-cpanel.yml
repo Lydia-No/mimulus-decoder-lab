@@ -31,6 +31,7 @@ jobs:
           rm -rf _deploy
           mkdir -p _deploy/api
           cp explorer/index.html _deploy/index.html
+          cp explorer/hypercube.html explorer/token-cube.js explorer/cube-view.js _deploy/
           cp hosting/cpanel/.htaccess _deploy/.htaccess
           cp hosting/cpanel/api/explore.php _deploy/api/explore.php
           python - <<'PY'

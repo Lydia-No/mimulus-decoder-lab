@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "explorer/index.html"
+      - "explorer/**"
       - "hosting/cpanel/**"
       - ".github/workflows/package-mimulus-cpanel.yml"
   workflow_dispatch:
@@ -25,6 +25,7 @@ jobs:
           rm -rf bundle
           mkdir -p bundle/api
           cp explorer/index.html bundle/index.html
+          cp explorer/hypercube.html explorer/token-cube.js explorer/cube-view.js bundle/
           cp hosting/cpanel/.htaccess bundle/.htaccess
           cp hosting/cpanel/api/explore.php bundle/api/explore.php
           cp hosting/cpanel/api/config.example.php bundle/api/config.example.php
