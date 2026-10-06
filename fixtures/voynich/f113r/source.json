@@ -1,0 +1,73 @@
+{
+  "fixture_id": "voynich-f113r",
+  "status": "source_image_frozen",
+  "source_id": "beinecke-ms408",
+  "folio": "f113r",
+  "source_region": {
+    "kind": "folio",
+    "authority_pointer": "https://collections.library.yale.edu/catalog/2002046?child_oid=1006270",
+    "authority_iiif_url": "https://collections.library.yale.edu/iiif/2/1006270/full/full/0/default.jpg",
+    "folio_identity_status": "registered_to_authority_catalog",
+    "access_copy_page_mapping_status": "not_required_for_authority_folio_identity",
+    "crop": "full-folio"
+  },
+  "source_layers": {
+    "image": {
+      "status": "frozen",
+      "classification": "SOURCE_IMAGE",
+      "authority_image_id": "1006270",
+      "sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c",
+      "byte_size": 2092549,
+      "mime": "image/jpeg",
+      "width": 2582,
+      "height": 3787,
+      "freeze_record": "authority-freeze.json",
+      "extraction": {
+        "status": "frozen",
+        "method": "Yale IIIF Image API full/full/0/default.jpg",
+        "region": "full-folio",
+        "iiif_region": "full",
+        "iiif_size": "full",
+        "iiif_rotation": "0",
+        "iiif_quality_format": "default.jpg"
+      }
+    },
+    "folio_metadata": {
+      "status": "registered",
+      "classification": "SOURCE_METADATA"
+    },
+    "transcriptions": [],
+    "layout_observations": [],
+    "reference_observations": "reference-observations.json",
+    "preprocessing": []
+  },
+  "historical_adapter": {
+    "path": "historical/adapter.js",
+    "protocol": "docs/HISTORICAL-INPUT-ADAPTER.md",
+    "status": "image_gate_open",
+    "known_answer_classifications_allowed": false
+  },
+  "experimental_boundary": {
+    "allow_semantic_claims_before_source_freeze": false,
+    "allow_silent_glyph_normalization": false,
+    "allow_transcription_as_source_substitute": false,
+    "allow_secondary_reference_observation_as_direct_source_evidence": false,
+    "require_decoder_provenance": true,
+    "require_frozen_runs_before_meta_comparison": true,
+    "require_synthetic_gate_before_historical_run": true
+  },
+  "planned_conditions": [
+    "unaltered_source",
+    "declared_transcription_variants",
+    "targeted_feature_ablation",
+    "structure-disrupting_permutation_where_applicable",
+    "blind_rerun"
+  ],
+  "notes": [
+    "No translation or decipherment claim is encoded in this fixture.",
+    "The Yale child-object pointer anchors folio identity independently of access-copy PDF pagination.",
+    "The exact full-folio JPEG returned by Yale IIIF image id 1006270 is frozen by SHA-256 and a reproducible retrieval record.",
+    "Image-only evidence-bearing historical runs may now pass the source-image gate. Any transcription-bearing run still requires its own frozen transcription provenance.",
+    "Historical cross-decoder agreement is recorded as residue or conflict, not as source-supported truth, because there is no independent Voynich answer key."
+  ]
+}

@@ -1,0 +1,31 @@
+name: Image decoder calibration 001
+
+on:
+  pull_request:
+    paths:
+      - 'fixtures/synthetic/image-calibration-001/request.json'
+
+permissions:
+  contents: read
+
+jobs:
+  calibrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned image dependency
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Run known-answer image calibration
+        run: python historical/image_calibration.py /tmp/image-calibration-001
+      - name: Show calibration result
+        run: cat /tmp/image-calibration-001/calibration.json
+      - name: Upload calibration bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-decoder-calibration-001
+          path: /tmp/image-calibration-001/*
+          if-no-files-found: error
+          retention-days: 90

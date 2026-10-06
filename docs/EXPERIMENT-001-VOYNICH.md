@@ -1,12 +1,22 @@
 # Experiment 001 — Voynich multi-decoder test
 
-Status: protocol draft
+Status: protocol draft; f113r source-image gate open.
 
 ## Purpose
 
 Test whether apparently meaningful structure in a selected Voynich passage is constrained by the source or generated primarily by decoder assumptions.
 
 This experiment does not begin with a decipherment hypothesis.
+
+## Source precedence
+
+This experiment follows `docs/SOURCE-PROVENANCE.md`.
+
+For evidence about what is visibly present, the manuscript image outranks any transcription, normalization, segmentation or decoder representation. A transcription is a declared representation of the source, not the source itself.
+
+A fixture is not enabled for evidence-bearing runs until its source pointer, folio/region identity, extraction procedure and relevant provenance fields are frozen. Do not invent or backfill hashes that were not computed from acquired bytes.
+
+Access-copy pagination is not source identity. Where an authoritative folio-level catalog pointer exists, use it to anchor the folio independently of a particular PDF's page numbering.
 
 ## Inputs
 
@@ -45,6 +55,23 @@ Each run should return:
 - uncertainty/alternatives;
 - information unavailable to the decoder.
 
+## Historical comparison semantics
+
+The synthetic gate has an independent answer key; the historical Voynich experiment does not.
+
+Therefore the known-answer labels used in Pilot 001, including `SOURCE_SUPPORTED_INVARIANT` and `DECODER_DEPENDENT_SUPPORTED`, are not available to the historical meta-observer.
+
+Historical agreement is described only as persistence or conflict across frozen outputs:
+
+- `CROSS_DECODER_RESIDUE`;
+- `PARTIAL_CROSS_DECODER_RESIDUE`;
+- `DECODER_SPECIFIC`;
+- `INCOMPATIBLE_READINGS`.
+
+These labels are local experimental bookkeeping, not theoretical terms. Agreement does not become correctness merely because multiple decoders produce it.
+
+The executable gate and comparison rules are in `historical/adapter.js`; see `docs/HISTORICAL-INPUT-ADAPTER.md`.
+
 ## Meta-observer pass
 
 Only after independent runs are frozen, compare them for:
@@ -65,6 +92,18 @@ Only after independent runs are frozen, compare them for:
 5. **Provenance audit:** can each important conclusion be traced to source evidence rather than an undeclared prior?
 6. **Cross-passage prediction:** does a decoder make a constraint or prediction that can be tested on material it was not tuned on?
 
+## First historical fixture
+
+`fixtures/voynich/f113r/source.json` is the initial historical fixture. Its folio identity is anchored to the Beinecke/Yale catalog object for f113r rather than inferred from access-copy page numbering.
+
+The full-folio authority image is now frozen from Yale IIIF image id `1006270`. The exact JPEG has SHA-256 `ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c`, dimensions 2582 × 3787, and size 2,092,549 bytes. A second independent authority retrieval matched the recorded hash. The retrieval and verification record is stored in `fixtures/voynich/f113r/authority-freeze.json`.
+
+This opens the source-image gate for image-only historical inputs. It does not automatically authorize a transcription-derived input: each transcription must separately declare its convention and version and retain its own frozen hash.
+
+`fixtures/voynich/f113r/reference-observations.json` records secondary descriptive observations separately from direct image evidence. Those observations may be used to design perturbations, but each must still be checked against the frozen image before being treated as direct source evidence.
+
+Synthetic known-answer material remains the required first validation stage for the measurement machinery and is already frozen as passed. Historical decoder runs must still satisfy the historical adapter, declare decoder provenance, freeze outputs before comparison, and preserve the distinction between source observation and interpretation.
+
 ## Interpretation boundary
 
-A successful run may establish that a decoder is reproducible, source-sensitive, predictive, or unusually invariant. None of those alone establishes that its semantic reading is the historical meaning of the Voynich Manuscript.
+A successful run may establish that a decoder is reproducible, source-sensitive, predictive, or unusually persistent across decoder contexts. None of those alone establishes that its semantic reading is the historical meaning of the Voynich Manuscript.

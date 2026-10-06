@@ -51,3 +51,14 @@ degree, one-axis adjacency, fixed-source identity, intervention order, recovery,
 opaque-mode scoring, coincident contexts, and reference alignment. Browser checks verified axis
 navigation, direct vertex selection, jump labeling, complete graph export, and
 opaque-mode recovery unavailability.
+
+## Integration with current main
+
+This Python workspace is a local comparison instrument alongside the existing
+Explorer and deterministic Pilot 001. It is not wired into the deployed Explorer
+or the beQube state/intervention adapters. It does not execute image decoders,
+change frozen historical results, or authorize the prospective held-out run.
+
+Integration validation against main commit `f60c876`: 69 Python tests passed,
+Pilot 001 assertions passed for all 12 cells, and the historical adapter checks
+passed for 3 meta-observations. Existing main files were preserved unchanged.

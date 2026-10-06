@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mimulus Explorer</title>
+<style>
+:root{color-scheme:dark;--bg:#071715;--panel:#0e2924;--line:#31594f;--text:#e7f5ef;--muted:#a8c8be;--accent:#8fe0bd}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1100px;margin:auto;padding:24px}.eyebrow{color:var(--muted);letter-spacing:.08em;font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}label{display:block;margin-top:14px;font-weight:600}input,textarea,select,button{font:inherit}textarea,select,input[type=password]{width:100%;margin-top:6px;background:#12362f;color:var(--text);border:1px solid #477064;border-radius:8px;padding:10px}textarea{min-height:110px;resize:vertical}button{margin-top:16px;background:var(--accent);color:#062019;border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer}button[disabled]{opacity:.5;cursor:not-allowed}.hint,.status{color:var(--muted);font-size:14px}.output{white-space:pre-wrap;overflow-wrap:anywhere;min-height:280px}.preview{max-width:100%;max-height:360px;border-radius:10px;margin-top:10px;border:1px solid var(--line)}.toolbar{display:flex;gap:10px;flex-wrap:wrap}.toolbar button{background:#1a473c;color:var(--text);border:1px solid #5b8b7b}.warning{border-left:3px solid #d6bf70;padding-left:12px;color:#e4d7a0}.meta{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--muted)}@media(max-width:800px){.grid{grid-template-columns:1fr}main{padding:14px}}
+</style>
+</head>
+<body>
+<main>
+<p class="eyebrow">MIMULUS / EXPLORATORY META-OBSERVER</p>
+<h1>Mimulus Explorer</h1>
+<p>Explore opaque writing without collapsing observation, assumptions, and interpretation into one answer.</p>
+<div class="grid">
+<section class="panel">
+<h2>Source</h2>
+<label>Image<input id="image" type="file" accept="image/png,image/jpeg,image/webp"></label>
+<img id="preview" class="preview" hidden alt="Selected source preview">
+<label>Transcription / EVA / intermediate text (optional)<textarea id="transcription" placeholder="Paste EVA, transliteration, or other intermediate representation here. It will be treated as supplied representation, not ground truth."></textarea></label>
+<label>Question or note<textarea id="note" placeholder="What do you want the model to investigate?"></textarea></label>
+<label>Mode<select id="mode"><option value="observe">Neutral observation</option><option value="structural">Structural analysis</option><option value="adversarial">Adversarial / competing decoder</option><option value="explore" selected>Free exploration, bounded</option></select></label>
+<label>Model profile<select id="profile"><option value="fast" selected>Fast / cheap</option><option value="deep">Deep / stronger</option></select></label>
+<label>Access token (only if configured)<input id="token" type="password" autocomplete="off" placeholder="Optional"></label>
+<p class="hint">Image, transcription, and notes are sent to the configured model endpoint. Explorer output is always marked exploratory.</p>
+<button id="run">Run explorer</button>
+<p id="status" class="status"></p>
+</section>
+<section class="panel">
+<h2>Research record</h2>
+<div id="output" class="output muted">No run yet.</div>
+<p id="meta" class="meta"></p>
+<div class="toolbar"><button id="copy" disabled>Copy result</button><button id="export" disabled>Export JSON</button></div>
+<p class="warning">A convincing reading is not a decipherment. Downstream translation of this output is lineage-dependent and does not count as independent corroboration of the source.</p>
+</section>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);let imageData='';let lastRun=null;
+$('image').addEventListener('change',()=>{const f=$('image').files[0];imageData='';$('preview').hidden=true;if(!f)return;if(f.size>5_500_000){$('status').textContent='Image is too large. Use a crop under about 5 MB.';return;}const r=new FileReader();r.onload=()=>{imageData=r.result;$('preview').src=imageData;$('preview').hidden=false;$('status').textContent='';};r.readAsDataURL(f);});
+function download(data,name){const u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+$('run').onclick=async()=>{const payload={image_data_url:imageData||undefined,transcription:$('transcription').value,note:$('note').value,mode:$('mode').value,profile:$('profile').value};if(!payload.image_data_url&&!payload.transcription.trim()&&!payload.note.trim()){$('status').textContent='Add an image, transcription, or question first.';return;}$('run').disabled=true;$('status').textContent='Running…';$('output').classList.add('muted');$('output').textContent='Analyzing source and separating observation from interpretation…';try{const headers={'Content-Type':'application/json'};const token=$('token').value.trim();if(token)headers['x-mimulus-explorer-token']=token;const r=await fetch('/api/explore',{method:'POST',headers,body:JSON.stringify(payload)});const data=await r.json();if(!r.ok)throw new Error(data?.detail||data?.error||'Request failed');lastRun=data;$('output').classList.remove('muted');$('output').textContent=data.output||'(No text output)';$('meta').textContent=`run ${data.run_id||'—'} · ${data.model||'—'} · ${data.mode||'—'} · ${data.profile||'—'}`;$('copy').disabled=false;$('export').disabled=false;$('status').textContent='Completed. Treat as exploratory decoder output.';}catch(e){$('output').textContent='Run failed.';$('status').textContent=e.message;}finally{$('run').disabled=false;}};
+$('copy').onclick=()=>lastRun&&navigator.clipboard.writeText(lastRun.output||'');$('export').onclick=()=>lastRun&&download(lastRun,`mimulus-${lastRun.run_id||'run'}.json`);
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+name: Deploy Mimulus Explorer to cPanel
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Preview FTPS changes without uploading"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build cPanel deploy package
+        env:
+          MIMULUS_OPENAI_API_KEY: ${{ secrets.MIMULUS_OPENAI_API_KEY }}
+          MIMULUS_EXPLORER_TOKEN: ${{ secrets.MIMULUS_EXPLORER_TOKEN }}
+          MIMULUS_FAST_MODEL: ${{ vars.MIMULUS_FAST_MODEL }}
+          MIMULUS_DEEP_MODEL: ${{ vars.MIMULUS_DEEP_MODEL }}
+        run: |
+          set -euo pipefail
+          test -n "${MIMULUS_OPENAI_API_KEY:-}" || { echo "Missing MIMULUS_OPENAI_API_KEY secret"; exit 1; }
+          rm -rf _deploy
+          mkdir -p _deploy/api
+          cp explorer/index.html _deploy/index.html
+          cp hosting/cpanel/.htaccess _deploy/.htaccess
+          cp hosting/cpanel/api/explore.php _deploy/api/explore.php
+          python - <<'PY'
+          import base64, os
+          from pathlib import Path
+
+          def b64(name, default=''):
+              value = os.environ.get(name) or default
+              return base64.b64encode(value.encode('utf-8')).decode('ascii')
+
+          config = """<?php
+          return array(
+              'OPENAI_API_KEY' => base64_decode('%s'),
+              'EXPLORER_TOKEN' => base64_decode('%s'),
+              'FAST_MODEL' => base64_decode('%s'),
+              'DEEP_MODEL' => base64_decode('%s')
+          );
+          """ % (
+              b64('MIMULUS_OPENAI_API_KEY'),
+              b64('MIMULUS_EXPLORER_TOKEN'),
+              b64('MIMULUS_FAST_MODEL', 'gpt-6-luna'),
+              b64('MIMULUS_DEEP_MODEL', 'gpt-6.1-sol'),
+          )
+          Path('_deploy/api/config.php').write_text(config, encoding='utf-8')
+          PY
+          printf '%s\n' "Mimulus Explorer cPanel package" "Generated from commit ${GITHUB_SHA}" > _deploy/DEPLOYMENT.txt
+
+      - name: Deploy over FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.ARCTOPIA_FTP_SERVER }}
+          username: ${{ secrets.ARCTOPIA_FTP_USERNAME }}
+          password: ${{ secrets.ARCTOPIA_FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./_deploy/
+          server-dir: ${{ secrets.MIMULUS_FTP_SERVER_DIR }}
+          state-name: .mimulus-ftps-state.json
+          dry-run: ${{ inputs.dry_run }}
+          security: strict
+          log-level: standard

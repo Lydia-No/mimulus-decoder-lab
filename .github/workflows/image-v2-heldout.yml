@@ -1,0 +1,43 @@
+name: Image-only v2 held-out gate
+
+on:
+  pull_request:
+    paths:
+      - 'requests/image-v2-heldout-run.json'
+
+permissions:
+  contents: read
+
+jobs:
+  heldout:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify frozen decoder blob
+        run: |
+          actual=$(git hash-object historical/image_decoders_v2.py)
+          expected=75207864d07573edf53fe29b321381e732347b91
+          echo "decoder_blob=$actual"
+          test "$actual" = "$expected"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned image dependency
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Run held-out gate and preserve result
+        run: |
+          mkdir -p /tmp/image-v2-heldout
+          set +e
+          python historical/image_v2_holdout.py /tmp/image-v2-heldout
+          code=$?
+          echo "$code" > /tmp/image-v2-heldout/exit-code.txt
+          exit 0
+      - name: Upload held-out result
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-only-v2-heldout-001
+          path: /tmp/image-v2-heldout/*
+          if-no-files-found: error
+          retention-days: 90
+      - name: Enforce held-out gate
+        run: test "$(cat /tmp/image-v2-heldout/exit-code.txt)" = "0"

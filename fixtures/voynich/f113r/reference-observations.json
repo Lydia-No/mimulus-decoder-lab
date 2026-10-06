@@ -1,0 +1,50 @@
+{
+  "fixture_id": "voynich-f113r",
+  "status": "secondary_reference_only",
+  "evidence_boundary": "These observations are useful for experiment design but are not direct SOURCE_IMAGE evidence until checked against frozen source bytes.",
+  "references": [
+    {
+      "name": "Voynich MS - Quire 20",
+      "url": "https://www.voynich.nu/q20/index.html",
+      "role": "secondary descriptive reference"
+    }
+  ],
+  "observations": [
+    {
+      "id": "folio-number",
+      "claim": "The folio number 113 is visible in the upper-right corner.",
+      "type": "folio_metadata",
+      "status": "reference_reported"
+    },
+    {
+      "id": "marginal-stars",
+      "claim": "Sixteen tailed stars are reported in the left margin, with alternating faded-yellow and red centre dots, beginning with faded yellow.",
+      "type": "layout_feature",
+      "status": "reference_reported"
+    },
+    {
+      "id": "line-count",
+      "claim": "Fifty-one standard-text loci/lines are reported.",
+      "type": "layout_feature",
+      "status": "reference_reported"
+    },
+    {
+      "id": "paragraph-count",
+      "claim": "The text is reported as approximately seventeen paragraphs, one more than the number of marginal stars.",
+      "type": "segmentation_reference",
+      "status": "reference_reported_not_source_truth"
+    },
+    {
+      "id": "physical-holes",
+      "claim": "Two tiny round holes are reported in the left margin and a smaller oval hole near the right edge.",
+      "type": "physical_feature",
+      "status": "reference_reported"
+    }
+  ],
+  "planned_uses": [
+    "predeclare star-presence and star-position ablations",
+    "test whether paragraph segmentation is decoder-dependent",
+    "compare star-aligned versus text-only representations",
+    "verify each claimed visual feature against frozen image bytes before scoring"
+  ]
+}

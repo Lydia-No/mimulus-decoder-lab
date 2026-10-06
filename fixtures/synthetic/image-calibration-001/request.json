@@ -1,0 +1,8 @@
+{
+  "calibration_id": "image-decoder-calibration-001",
+  "decoder_version": "image-only-001.0",
+  "protocol": "docs/IMAGE-DECODER-CALIBRATION-001.md",
+  "seed": 170113,
+  "status": "requested",
+  "boundary": "Result-bearing calibration requested only after controls, known answers and pass criterion were merged to main."
+}

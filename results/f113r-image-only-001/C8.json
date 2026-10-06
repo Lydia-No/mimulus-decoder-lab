@@ -1,0 +1,47 @@
+{
+  "claims": [
+    {
+      "claimKey": "horizontal-repetition",
+      "evidence": [{"layer": "SOURCE_IMAGE", "locator": "C8:component-centroid-occupancy"}],
+      "proposition": "present",
+      "target": "full-folio-layout"
+    },
+    {
+      "claimKey": "left-margin-discrete-repetition",
+      "evidence": [{"layer": "SOURCE_IMAGE", "locator": "C8:margin-component-geometry"}],
+      "proposition": "not_detected",
+      "target": "left-margin-layout"
+    }
+  ],
+  "decoder": {
+    "assumptions": [
+      "grayscale source image only",
+      "BOX downsampling followed by Otsu binarization",
+      "horizontal organization is inferred from connected-component centroid occupancy across vertical bins",
+      "left-margin repetition is inferred from repeated component loci under fixed geometry bounds"
+    ],
+    "blindCode": "C8",
+    "version": "image-only-001.0"
+  },
+  "frozen": true,
+  "measurements": {
+    "activeVerticalBins": 65,
+    "centralCandidateComponents": 1823,
+    "componentCount": 2446,
+    "marginCandidateComponents": 224,
+    "marginCollapsedLoci": 49,
+    "marginMedianGapPx": 8.1015625,
+    "otsu": 165
+  },
+  "preprocessing": {
+    "innerCrop": [0.02, 0.04, 0.96, 0.96],
+    "representation": "BOX grayscale resize plus connected-component geometry",
+    "verticalBins": 72,
+    "width": 360
+  },
+  "runId": "f113r-image-C8",
+  "source": {
+    "fixtureId": "voynich-f113r",
+    "sha256": "ad748f9012b174be520b7ac837fdadf913e49a696323920ca655ecf5474afb5c"
+  }
+}

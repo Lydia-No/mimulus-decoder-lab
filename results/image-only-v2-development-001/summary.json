@@ -1,0 +1,17 @@
+{
+  "development_id": "image-only-v2-development-001",
+  "decoder_version": "image-only-002.0-dev",
+  "decoder_blob_sha": "75207864d07573edf53fe29b321381e732347b91",
+  "workflow_run_id": 37398461965,
+  "artifact_id": 11384327892,
+  "artifact_zip_sha256": "f51650cc938e2a26745a4529fda9dbe82e340bb8065741bcdb21c4eea628d167",
+  "scores": {
+    "A3": {"correct": 16, "total": 16, "passed": true},
+    "B6": {"correct": 16, "total": 16, "passed": true},
+    "C9": {"correct": 16, "total": 16, "passed": true}
+  },
+  "gate_passed": true,
+  "historical_use_authorized": false,
+  "next_gate": "separate prospective held-out synthetic set",
+  "boundary": "This is development performance, not holdout evidence and not evidence about Voynich. The decoder blob above must remain unchanged through the held-out test."
+}
