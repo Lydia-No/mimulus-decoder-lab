@@ -98,6 +98,33 @@ Because the prospective gate required every decoder to score 20/20, `image-only-
 
 See `docs/IMAGE-ONLY-V2-DEVELOPMENT.md`, `docs/IMAGE-ONLY-V2-HELDOUT.md`, `results/image-only-v2-development-001/`, and `results/image-only-v2-heldout-001/`.
 
+## Image-only v3 and decision-rule ancestry
+
+`image-only-003.0-dev` retained A3 and C9 unchanged and replaced B6 with B7, which expresses margin periodicity relative to crop height rather than through a fixed absolute upper lag bound.
+
+The v3 development matrix included the already-inspected v2 holdout as development evidence plus additional scale and texture cases. It scored:
+
+- A3: 32/32;
+- B7: 32/32;
+- C9: 32/32;
+- total: 96/96.
+
+The candidate was then frozen at Git blob `24cd6a61c1744657ef6bbd62b14ee47a0afb8c8d` before a completely fresh held-out set was introduced. That holdout added new seeds and geometry plus adversarial margin nulls not present in development.
+
+The fresh held-out result was:
+
+- A3: 23/24 — FAIL;
+- B7: 24/24 — PASS;
+- C9: 23/24 — FAIL.
+
+A3 and C9 failed on exactly the same new condition: `irregular_margin_null`. The two decoders use different image representations, but both accepted margin repetition through the same permissive downstream regularity assumption: gap coefficient of variation `<= 0.45`. The adversarial irregular sequence fell just inside that tolerance for both decoders and produced the same false positive.
+
+B7 correctly rejected the same case despite very high horizontal concentration because the margin autocorrelation was low. This isolates a broader methodological point for Mimulus: **representation diversity alone is not sufficient evidence of decoder independence**. Shared downstream criteria can create apparent cross-decoder agreement even when upstream representations differ. Decoder comparison therefore has to track decision-rule ancestry and shared criteria, not only decoder labels or representations.
+
+Because the prospective v3 gate required all three decoders to score 24/24, `image-only-003.0-dev` is **blocked from historical use**. No v3 f113r rerun is authorized.
+
+See `docs/IMAGE-ONLY-V3-DEVELOPMENT.md`, `docs/IMAGE-ONLY-V3-HELDOUT.md`, `results/image-only-v3-development-001/`, and `results/image-only-v3-heldout-001/`.
+
 ## Initial falsification questions
 
 - Does an apparent pattern survive changes in decoder assumptions?
@@ -106,6 +133,7 @@ See `docs/IMAGE-ONLY-V2-DEVELOPMENT.md`, `docs/IMAGE-ONLY-V2-HELDOUT.md`, `resul
 - Can a competing decoder generate an equally coherent but incompatible reading?
 - Which parts of a reading are source-constrained, and which are supplied by the interpretive system?
 - Does a claimed invariant survive deliberately adversarial decoder contexts?
+- Does cross-decoder agreement survive an audit for shared decision rules and common downstream criteria?
 
 ## Voynich experiment
 
@@ -117,7 +145,9 @@ Historical source handling is governed by `docs/SOURCE-PROVENANCE.md`. The first
 
 ## Status
 
-Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The f113r authority image is frozen and independently re-verified. The first preregistered image-only historical run remains frozen with incompatible decoder readings. Both subsequent image-decoder generations have been prevented from further historical use by prospective synthetic gates: v1 failed known-answer calibration, while v2 passed development but failed its separately frozen held-out gate. No decipherment claim is made.
+Active experimental scaffold. Pilot 001 is frozen and passed. The historical comparison adapter is implemented and tested. The f113r authority image is frozen and independently re-verified. The first preregistered image-only historical run remains frozen with incompatible decoder readings.
+
+Subsequent generations have been prevented from returning to f113r by prospective synthetic gates: v1 failed known-answer calibration; v2 passed development but failed held-out scale transport; v3 passed development and repaired the v2 scale failure, but its fresh holdout exposed shared decision-rule ancestry between A3 and C9. No current image-only decoder generation is authorized for historical reuse, and no decipherment claim is made.
 
 ## Authorship
 

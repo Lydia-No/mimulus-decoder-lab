@@ -1,0 +1,54 @@
+{
+  "holdout_id": "image-only-v3-heldout-001",
+  "decoder_version": "image-only-003.0-dev",
+  "frozen_decoder_blob_sha": "24cd6a61c1744657ef6bbd62b14ee47a0afb8c8d",
+  "workflow_run_id": 37399307648,
+  "artifact_id": 11384439430,
+  "artifact_zip_sha256": "327e1dcb0821eac2ecc730c8d719d26e3dbd6d3c74feb73ff7810828f5a57783",
+  "scores": {
+    "A3": {"correct": 23, "total": 24, "passed": false},
+    "B7": {"correct": 24, "total": 24, "passed": true},
+    "C9": {"correct": 23, "total": 24, "passed": false}
+  },
+  "gate_passed": false,
+  "historical_use_authorized": false,
+  "failing_cells": [
+    {
+      "decoder": "A3",
+      "condition": "irregular_margin_null",
+      "claim": "left-margin-discrete-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {
+        "marginBandCount": 14,
+        "marginMedianGapPx": 98.0,
+        "marginGapCv": 0.438255936719407
+      }
+    },
+    {
+      "decoder": "C9",
+      "condition": "irregular_margin_null",
+      "claim": "left-margin-discrete-repetition",
+      "expected": "not_detected",
+      "actual": "present",
+      "measurements": {
+        "macroMarginLoci": 13,
+        "macroMarginMedianGapPx": 32.0,
+        "macroMarginGapCv": 0.387989995328574
+      }
+    }
+  ],
+  "notable_pass": {
+    "decoder": "B7",
+    "score": "24/24",
+    "irregular_margin_null": {
+      "actual": "not_detected",
+      "marginBestAutocorrelation": 0.2569928576129091,
+      "marginBestLagPx": 133,
+      "marginLagFraction": 0.11195286195286196,
+      "marginTop20ColumnEnergyFraction": 0.9968252872769937
+    }
+  },
+  "diagnosis": "A3 and C9 use different image representations but share a permissive gap-regularity decision assumption: both accept margin repetition when gap CV is <= 0.45. The fresh irregular-margin null fell just within that shared tolerance and produced the same false positive in both families. B7, whose decision rule relies on autocorrelation plus concentration rather than gap CV, correctly rejected the case.",
+  "boundary": "The prospective gate failed, so image-only-003.0-dev is blocked from historical use. The shared A3/C9 decision assumption must not be repaired inside this version. Any successor requires a new version and a new future holdout."
+}
