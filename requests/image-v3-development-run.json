@@ -1,0 +1,6 @@
+{
+  "request": "image-only-v3-development-001",
+  "decoder_version": "image-only-003.0-dev",
+  "historical_input": false,
+  "holdout": false
+}
