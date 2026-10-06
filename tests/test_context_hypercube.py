@@ -1,3 +1,5 @@
+import pytest
+
 from mimulus_decoder.context_cube import AXES, context_hypercube
 from mimulus_decoder.encoding import encode_tokens
 from mimulus_decoder.model import Observation
@@ -58,3 +60,22 @@ def test_identical_context_outputs_do_not_establish_independence():
     nodes = {n["id"]: n for n in cube["nodes"]}
     assert nodes["0000"]["mapping"] == nodes["0010"]["mapping"]
     assert "not independent" in cube["boundary"]
+
+
+@pytest.mark.parametrize("source", ["x q", "q", "q x x"])
+def test_reference_with_same_id_but_different_tokens_is_rejected(source):
+    fixture = encode_tokens("s", "e", ("sun", "water"), {"sun": "q", "water": "x"})
+    with pytest.raises(ValueError, match="same encoded token sequence"):
+        context_hypercube(Observation("s", source), {"q": "sun", "x": "water"}, {}, fixture)
+
+
+def test_reference_with_different_source_id_is_rejected():
+    fixture = encode_tokens("s", "e", ("sun",), {"sun": "q"})
+    with pytest.raises(ValueError, match="same source identifier"):
+        context_hypercube(Observation("other", "q"), {"q": "sun"}, {}, fixture)
+
+
+def test_reference_alignment_compares_tokens_not_whitespace():
+    fixture = encode_tokens("s", "e", ("sun", "water"), {"sun": "q", "water": "x"})
+    cube = context_hypercube(Observation("s", " q\n\tx "), {"q": "sun", "x": "water"}, {}, fixture)
+    assert cube["nodes"][0]["recovery"]["exact_recovery"]

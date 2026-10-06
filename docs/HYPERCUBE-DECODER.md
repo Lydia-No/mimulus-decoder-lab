@@ -42,8 +42,12 @@ Export includes the complete 16-context graph and a user inspection trace. The
 trace is a navigation record, not a scientific causal history. Editing the source
 or decoder rules invalidates the entire graph and its trace until another run.
 
-Validation: all 64 tests passed. Tests cover graph size, unique edges, vertex
+Before scoring, the source identifier and ordered encoded tokens must match the
+reference. A reused identifier alone cannot authorize scoring a different source.
+Whitespace differences are allowed within the whitespace-token model.
+
+Validation: all 69 tests passed. Tests cover graph size, unique edges, vertex
 degree, one-axis adjacency, fixed-source identity, intervention order, recovery,
-opaque-mode scoring, and coincident contexts. Browser checks verified axis
+opaque-mode scoring, coincident contexts, and reference alignment. Browser checks verified axis
 navigation, direct vertex selection, jump labeling, complete graph export, and
 opaque-mode recovery unavailability.

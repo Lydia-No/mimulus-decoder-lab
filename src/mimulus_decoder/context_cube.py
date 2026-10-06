@@ -27,6 +27,11 @@ def context_hypercube(observation: Observation, mapping_a: Mapping[str, str],
     symbol, filter to repeated symbols. The source is never transformed.
     """
     tokens = observation.transcription.split()
+    if fixture is not None:
+        if observation.source_id != fixture.source_id:
+            raise ValueError("Observation and reference must have the same source identifier")
+        if tuple(tokens) != fixture.encoded_tokens:
+            raise ValueError("Observation and reference must have the same encoded token sequence")
     counts = Counter(tokens)
     nodes = []
     readings = []
