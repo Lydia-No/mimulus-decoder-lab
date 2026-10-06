@@ -1,0 +1,43 @@
+name: Token decoder and hypercube tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/mimulus_decoder/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - '.github/workflows/token-decoder-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/mimulus_decoder/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - '.github/workflows/token-decoder-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install token workspace and test dependencies
+        run: python -m pip install --disable-pip-version-check '.[test]'
+      - name: Test encoder, recovery, and hypercube
+        run: python -m pytest -q
+      - name: Verify installed browser assets outside the checkout
+        working-directory: ${{ runner.temp }}
+        run: |
+          python - <<'PY'
+          from importlib.resources import files
+          for name in ('decoder.html', 'hypercube.js'):
+              assert files('mimulus_decoder').joinpath(name).read_bytes(), name
+          PY

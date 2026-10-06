@@ -57,8 +57,13 @@ opaque-mode recovery unavailability.
 This Python workspace is a local comparison instrument alongside the existing
 Explorer and deterministic Pilot 001. It is not wired into the deployed Explorer
 or the beQube state/intervention adapters. It does not execute image decoders,
-change frozen historical results, or authorize the prospective held-out run.
+change frozen historical results, or authorize further historical image runs.
 
 Integration validation against main commit `f60c876`: 69 Python tests passed,
 Pilot 001 assertions passed for all 12 cells, and the historical adapter checks
 passed for 3 meta-observations. Existing main files were preserved unchanged.
+
+The token workspace has a dedicated CI workflow for Python 3.10 and 3.12.
+It runs the token tests and checks the installed HTML/JavaScript assets from
+outside the checkout. These software checks do not run the image calibration,
+held-out image experiment, or external model calls.
