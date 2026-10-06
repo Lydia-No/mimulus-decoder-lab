@@ -1,0 +1,7 @@
+{
+  "request": "image-only-v2-development-001",
+  "decoder_version": "image-only-002.0-dev",
+  "historical_input": false,
+  "holdout": false,
+  "note": "Run the frozen synthetic development set only."
+}
