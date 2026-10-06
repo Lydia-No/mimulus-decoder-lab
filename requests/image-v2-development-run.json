@@ -3,5 +3,6 @@
   "decoder_version": "image-only-002.0-dev",
   "historical_input": false,
   "holdout": false,
+  "attempt": 1,
   "note": "Run the frozen synthetic development set only."
 }
