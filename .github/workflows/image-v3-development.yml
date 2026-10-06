@@ -1,0 +1,29 @@
+name: Image-only v3 development
+
+on:
+  pull_request:
+    paths:
+      - 'requests/image-v3-development-run.json'
+
+permissions:
+  contents: read
+
+jobs:
+  develop:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned image dependency
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Run v3 synthetic development gate
+        run: python historical/image_v3_development.py /tmp/image-v3-development
+      - name: Upload v3 development result
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-only-v3-development-001
+          path: /tmp/image-v3-development/development.json
+          if-no-files-found: error
+          retention-days: 90
