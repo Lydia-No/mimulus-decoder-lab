@@ -7,26 +7,30 @@ const AXES=[
  {id:'assignment',label:'Target assignment',choices:['Declared','Rotate targets']},
  {id:'frequency',label:'Symbol filter',choices:['All observed','Repeated only']}
 ];
+// Match Python str.split()/isspace(), including C0 separators and NEL.
+const space=/[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]/u;
+const spaces=/[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+/u;
+function codepointOrder(a,b){const aa=Array.from(a,c=>c.codePointAt(0)),bb=Array.from(b,c=>c.codePointAt(0));for(let i=0;i<Math.min(aa.length,bb.length);i++)if(aa[i]!==bb[i])return aa[i]-bb[i];return aa.length-bb.length;}
 const owns=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
 function rules(value,name){
- if(!value||typeof value!=='object'||Array.isArray(value)||Object.entries(value).some(([k,v])=>!k||typeof v!=='string'||!v||/\s/.test(k+v)))throw Error(`${name} must contain single nonempty token pairs`);
+ if(!value||typeof value!=='object'||Array.isArray(value)||Object.entries(value).some(([k,v])=>!k||typeof v!=='string'||!v||space.test(k+v)))throw Error(`${name} must contain single nonempty token pairs`);
  return Object.fromEntries(Object.entries(value));
 }
 function compare(readings){
  const keys=new Set(readings.flatMap(r=>Object.keys(r.mapping_claims))),shared={},conflicts={};
- for(const k of keys){const values=readings.filter(r=>owns(r.mapping_claims,k)).map(r=>r.mapping_claims[k]),unique=[...new Set(values)].sort();
+ for(const k of keys){const values=readings.filter(r=>owns(r.mapping_claims,k)).map(r=>r.mapping_claims[k]),unique=[...new Set(values)].sort(codepointOrder);
  if(values.length===readings.length&&unique.length===1)Object.defineProperty(shared,k,{value:unique[0],enumerable:true});
  else if(unique.length>1)Object.defineProperty(conflicts,k,{value:unique,enumerable:true});}
  return {outcome:Object.keys(conflicts).length?'divergence':Object.keys(shared).length?'convergence':'undetermined',shared_mappings:shared,conflicting_mappings:conflicts,shared_structure:[]};
 }
 function reading(tokens,mapping,sourceId,decoderId){
  const used=Object.fromEntries(tokens.filter(t=>owns(mapping,t)).map(t=>[t,mapping[t]]));
- return {source_id:sourceId,decoder_id:decoderId,mapping_claims:used,semantic_reading:tokens.map(t=>owns(mapping,t)?mapping[t]:`[${t}]`).join(' '),uncertainties:[...new Set(tokens.filter(t=>!owns(mapping,t)))].sort().map(t=>`No mapping for ${JSON.stringify(t)}`)};
+ return {source_id:sourceId,decoder_id:decoderId,mapping_claims:used,semantic_reading:tokens.map(t=>owns(mapping,t)?mapping[t]:`[${t}]`).join(' '),uncertainties:[...new Set(tokens.filter(t=>!owns(mapping,t)))].sort(codepointOrder).map(t=>`No mapping for ${JSON.stringify(t)}`)};
 }
 async function analyze(payload){
- if(!payload||!['known','opaque'].includes(payload.mode)||typeof payload.source!=='string'||!payload.source.trim())throw Error('Choose a mode and enter source tokens');
- if(payload.source.length>16000)throw Error('Source exceeds the workspace limit');
- const original=payload.source.trim().split(/\s+/),a=rules(payload.decoder_a,'Decoder A'),b=rules(payload.decoder_b,'Decoder B');
+ if(!payload||!['known','opaque'].includes(payload.mode)||typeof payload.source!=='string'||!payload.source.split(spaces).filter(Boolean).length)throw Error('Choose a mode and enter source tokens');
+ if(Array.from(payload.source).length>16000)throw Error('Source exceeds the workspace limit');
+ const original=payload.source.split(spaces).filter(Boolean),a=rules(payload.decoder_a,'Decoder A'),b=rules(payload.decoder_b,'Decoder B');
  let tokens=original,reference=null;
  if(payload.mode==='known'){
   const encoder=rules(payload.encoder,'Encoder');
@@ -42,7 +46,7 @@ async function analyze(payload){
  const nodes=[];
  for(let v=0;v<16;v++){
   const bits=AXES.map((_,i)=>(v>>i)&1),id=bits.join('');let map={...(bits[0]?b:a)};
-  if(bits[2]){const keys=Object.keys(map).sort(),values=keys.map(k=>map[k]);map=Object.fromEntries(keys.map((k,i)=>[k,values[(i+1)%keys.length]]));}
+  if(bits[2]){const keys=Object.keys(map).sort(codepointOrder),values=keys.map(k=>map[k]);map=Object.fromEntries(keys.map((k,i)=>[k,values[(i+1)%keys.length]]));}
   if(bits[1])delete map[tokens[0]];
   if(bits[3])map=Object.fromEntries(Object.entries(map).filter(([k])=>counts.get(k)>1));
   const r=reading(tokens,map,sourceId,`cube-${id}`);

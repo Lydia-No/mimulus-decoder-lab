@@ -21,8 +21,17 @@ const {analyze,inspect}=require('./token-cube.js');
  const odd=await analyze({mode:'opaque',source:'__proto__ q',decoder_a:JSON.parse('{"__proto__":"sun","q":"water"}'),decoder_b:{}});assert.equal(odd.results[0].reading.semantic_reading,'sun water');
  // Compare actual Python decoder scores/mappings for every context, not just graph shape.
  const {spawnSync}=require('node:child_process');
- const py=spawnSync(process.env.MIMULUS_TEST_PYTHON||'python3',['-c','import json,sys; from mimulus_decoder.interactive import analyze; print(json.dumps(analyze(json.load(sys.stdin))))'],{input:JSON.stringify(payload),env:{...process.env,PYTHONPATH:'src'},encoding:'utf8',timeout:10000});
- assert.equal(py.status,0,py.stderr);const gold=JSON.parse(py.stdout);
- for(let i=0;i<16;i++){assert.deepEqual(q.nodes[i].mapping,gold.hypercube.nodes[i].mapping);assert.equal(q.nodes[i].reading.semantic_reading,gold.hypercube.nodes[i].reading.semantic_reading);assert.equal(q.nodes[i].recovery.token_accuracy,gold.hypercube.nodes[i].recovery.token_accuracy);}
- console.log('Explorer hypercube checks passed: topology, references, interventions, opaque/lossy modes, and 16 Python parity contexts');
+ const cases=[payload,
+  {mode:'opaque',source:'q\u0085x\u001cq',decoder_a:{q:'sun',x:'water'},decoder_b:{}},
+  {...payload,encoder:{sun:'q',water:'q',stone:'z'},allow_lossy:true},
+  {mode:'opaque',source:'__proto__ q',decoder_a:JSON.parse('{"__proto__":"sun","q":"water"}'),decoder_b:{}},
+  {mode:'opaque',source:'\ue000 😀 a',decoder_a:{'\ue000':'one','😀':'two',a:'three'},decoder_b:{}},
+  {...payload,decoder_a:payload.decoder_b}];
+ for(const sample of cases){
+  const py=spawnSync(process.env.MIMULUS_TEST_PYTHON||'python3',['-c','import json,sys; from mimulus_decoder.interactive import analyze; r=analyze(json.load(sys.stdin)); r["observation"]["transcription"]=" ".join(r["observation"]["transcription"].split()); print(json.dumps(r))'],{input:JSON.stringify(sample),env:{...process.env,PYTHONPATH:'src'},encoding:'utf8',timeout:10000});
+  assert.equal(py.status,0,py.stderr);const gold=JSON.parse(py.stdout),browser=await analyze(sample);
+  assert.equal(browser.observation.transcription,gold.observation.transcription);
+  for(let i=0;i<16;i++){const actual=browser.hypercube.nodes[i],expected=gold.hypercube.nodes[i];assert.deepEqual(actual.mapping,expected.mapping);assert.equal(actual.reading.semantic_reading,expected.reading.semantic_reading);assert.equal(actual.recovery?.token_accuracy,expected.recovery?.token_accuracy);assert.equal(actual.recovery?.unresolved_tokens,expected.recovery?.unresolved_tokens);}
+ }
+ console.log('Explorer hypercube checks passed: topology, references, interventions, opaque/lossy modes, and 96 Python parity contexts');
 })().catch(e=>{console.error(e);process.exitCode=1});

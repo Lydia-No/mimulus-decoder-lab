@@ -6,7 +6,9 @@ Python, API key, or model request is required. Source tokens and explicit mappin
 remain in the browser; exporting a record is the persistence step.
 
 The browser adapter implements the token decoder separately, with a CI parity
-check against all 16 Python contexts. This is explicit mapping comparison, not
+check across 96 Python contexts spanning known, opaque, lossy, shared-wrong,
+prototype-like token names, and Unicode inputs. Token separators and symbol
+sorting match Python whitespace and Unicode code-point order. This is explicit mapping comparison, not
 an automatic decoder or an image experiment. The source identifier hashes the
 normalized encoded token sequence (UTF-8, single-space separators), not original
 image bytes, raw formatting, or historical authenticity. Known originals and
